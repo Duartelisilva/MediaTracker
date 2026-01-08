@@ -11,7 +11,14 @@ public class Movie : INotifyPropertyChanged
     private int _year;
     private string? _franchise;
     private int? _franchiseNumber;
-    public string? BigFranchise { get; set; } // e.g., "Marvel", "DC"
+
+    private string? _bigFranchise;
+    public string? BigFranchise
+    {
+        get => _bigFranchise;
+        set { _bigFranchise = value; OnPropertyChanged(); }
+    }
+
     private string? _note;
     private bool _isEditing = false;
 
@@ -100,4 +107,29 @@ public class Movie : INotifyPropertyChanged
         return System.Text.RegularExpressions.Regex
             .Replace(text.Trim(), @"\s+", " ");
     }
+
+    public string DisplayMeta
+    {
+        get
+        {
+            var parts = new List<string>();
+
+            if (Year != null)
+                parts.Add(Year.ToString());
+
+            if (!string.IsNullOrWhiteSpace(Franchise))
+            {
+                var f = Franchise;
+                if (FranchiseNumber.HasValue)
+                    f += " " + FranchiseNumber.Value;
+                parts.Add(f);
+            }
+
+            if (LastWatchedDate.HasValue)
+                parts.Add(LastWatchedDate.Value.ToString("dd/MM/yyyy"));
+
+            return string.Join(" • ", parts);
+        }
+    }
+
 }

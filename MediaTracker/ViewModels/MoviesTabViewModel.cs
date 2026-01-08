@@ -30,6 +30,13 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         get => _newFranchise;
         set { _newFranchise = Normalize(value); OnPropertyChanged(); }
     }
+
+    private string? _newBigFranchise;
+    public string? NewBigFranchise
+    {
+        get => _newBigFranchise;
+        set { _newBigFranchise = Normalize(value); OnPropertyChanged(); }
+    }
     public int NewYear { get; set; } = DateTime.Now.Year;
 
     private int? _newFranchiseNumber;
@@ -46,6 +53,8 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         get => _newWatchDate;
         set { _newWatchDate = value?.Trim(); OnPropertyChanged(); }
     }
+
+
 
     // Commands
     public ICommand AddMovieCommand { get; }
@@ -151,7 +160,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         bool hasFranchise = !string.IsNullOrWhiteSpace(NewFranchise);
         bool hasFranchiseNumber = NewFranchiseNumber.HasValue;
 
-        if (hasFranchise ^ hasFranchiseNumber) // only one filled
+        if ((hasFranchise && !hasFranchiseNumber) || (!hasFranchise && hasFranchiseNumber)) // only one filled
         {
             MessageBox.Show("Both Franchise and Franchise Number must be filled together.", "Invalid input");
             return;
@@ -179,6 +188,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             Title = trimmedTitle,
             Franchise = hasFranchise ? trimmedFranchise : null,
             FranchiseNumber = hasFranchiseNumber ? NewFranchiseNumber : null,
+            BigFranchise = NewBigFranchise,
             Year = NewYear
         };
 
@@ -196,6 +206,13 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             MoviesCollection.Add(m);
 
         SaveMovies();
+
+        NewTitle = "";
+        NewYear = DateTime.Now.Year;
+        NewBigFranchise = "";
+        NewFranchise = "";
+        NewFranchiseNumber = null;
+        NewWatchDate = "";
     }
 
     private void AddWatchDate(Movie movie)
