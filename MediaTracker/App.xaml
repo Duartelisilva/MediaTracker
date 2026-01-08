@@ -1,0 +1,18 @@
+﻿<Application x:Class="MediaTracker.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:MediaTracker.ViewModels"
+             xmlns:views="clr-namespace:MediaTracker.Views"
+             StartupUri="MainWindow.xaml">
+
+    <Application.Resources>
+        <!-- Maps ViewModel → View -->
+        <DataTemplate DataType="{x:Type vm:MoviesTabViewModel}">
+            <views:MoviesTabView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:SeriesTabViewModel}">
+            <views:SeriesTabView />
+        </DataTemplate>
+    </Application.Resources>
+</Application>

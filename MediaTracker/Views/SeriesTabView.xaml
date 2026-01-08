@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="MediaTracker.Views.SeriesTabView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="600">
+
+    <Grid Margin="10">
+        <StackPanel>
+            <!-- Add Series -->
+            <TextBlock Text="Add Series" FontWeight="Bold"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="Title:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <TextBox Width="120" Text="{Binding NewTitle, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0"/>
+                <TextBlock Text="Year:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <TextBox Width="60" Text="{Binding NewYear, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0"/>
+                <Button Content="Add" Command="{Binding AddSeriesCommand}"/>
+            </StackPanel>
+
+            <!-- Series list -->
+            <ItemsControl ItemsSource="{Binding SeriesCollection}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="0,0,0,10" Background="#EEE">
+                            <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Year}" FontStyle="Italic"/>
+
+                            <!-- Series-level Watch Dates -->
+                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                <TextBox Width="100" Text="{Binding DataContext.NewWatchDate, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                <Button Content="Add Date"
+                                        Command="{Binding DataContext.AddSeriesWatchDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"/>
+                            </StackPanel>
+                            <ItemsControl ItemsSource="{Binding WatchDates}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding StringFormat=dd/MM/yyyy}" Margin="0,0,5,0"/>
+                                            <Button Content="X"
+                                                    Command="{Binding DataContext.RemoveSeriesWatchDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Seasons -->
+                            <ItemsControl ItemsSource="{Binding Seasons}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="5,5,0,0">
+                                            <TextBlock Text="Season: {Binding Number}" FontWeight="SemiBold"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBox Width="100" Text="{Binding DataContext.NewWatchDate, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                                <Button Content="Add Date"
+                                                        Command="{Binding DataContext.AddSeasonWatchDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"/>
+                                            </StackPanel>
+                                            <ItemsControl ItemsSource="{Binding WatchDates}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding StringFormat=dd/MM/yyyy}" Margin="0,0,5,0"/>
+                                                            <Button Content="X"
+                                                                    Command="{Binding DataContext.RemoveSeasonWatchDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                    CommandParameter="{Binding}"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Grid>
+</UserControl>
