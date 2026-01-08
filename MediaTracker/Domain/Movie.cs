@@ -75,6 +75,7 @@ public class Movie : INotifyPropertyChanged
             OnPropertyChanged(nameof(Seen));
             OnPropertyChanged(nameof(WatchDates));
         };
+
     }
 
 
@@ -131,5 +132,20 @@ public class Movie : INotifyPropertyChanged
             return string.Join(" • ", parts);
         }
     }
+    public class BigFranchiseGroup : INotifyPropertyChanged
+    {
+        public string Name { get; set; } = "Undefined";
+        public ObservableCollection<Movie> Movies { get; } = new();
 
+        private bool _isCollapsed;
+        public bool IsCollapsed
+        {
+            get => _isCollapsed;
+            set { _isCollapsed = value; OnPropertyChanged(); }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propName = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
 }

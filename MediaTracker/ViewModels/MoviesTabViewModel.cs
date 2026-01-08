@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Linq;
 using System.ComponentModel;
 using System.Windows.Data;
+using static MediaTracker.Domain.Movie;
 
 namespace MediaTracker.ViewModels;
 
@@ -53,8 +54,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         get => _newWatchDate;
         set { _newWatchDate = value?.Trim(); OnPropertyChanged(); }
     }
-
-
+    public ObservableCollection<BigFranchiseGroup> BigFranchiseGroups { get; } = new();
 
     // Commands
     public ICommand AddMovieCommand { get; }
@@ -79,6 +79,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         var collectionView = CollectionViewSource.GetDefaultView(MoviesCollection);
         collectionView.GroupDescriptions.Clear();
         collectionView.GroupDescriptions.Add(new PropertyGroupDescription("BigFranchise"));
+        MoviesCollection.CollectionChanged += (_, __) => RefreshBigFranchiseGroups();
 
         ToggleExpandCommand = new RelayCommand(obj =>
         {
@@ -98,6 +99,8 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             movie.IsExpanded = false;
             MoviesCollection.Add(movie);
         }
+        RefreshBigFranchiseGroups();
+
         AddMovieCommand = new RelayCommand(_ => AddMovie());
         AddWatchDateCommand = new RelayCommand(obj => AddWatchDate((Movie)obj!));
         RemoveWatchDateCommand = new RelayCommand(obj =>
@@ -137,6 +140,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
                     MoviesCollection.Add(m);
 
                 SaveMovies();
+                RefreshBigFranchiseGroups();
             }
         });
     }
@@ -205,7 +209,9 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         foreach (var m in sorted)
             MoviesCollection.Add(m);
 
+        RefreshGroups();
         SaveMovies();
+        RefreshBigFranchiseGroups();
 
         NewTitle = "";
         NewYear = DateTime.Now.Year;
@@ -239,9 +245,6 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         NewWatchDate = "";
         OnPropertyChanged(nameof(NewWatchDate));
         SaveMovies();
-
-
-        SaveMovies();
     }
 
     private void RemoveWatchDate(Tuple<Movie, DateTime> param)
@@ -264,6 +267,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
 
         MoviesCollection.Remove(movie); // UI updates automatically because it's ObservableCollection
         SaveMovies();                  // persist changes to JSON
+        RefreshBigFranchiseGroups();
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -335,4 +339,44 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         return System.Text.RegularExpressions.Regex
             .Replace(text.Trim(), @"\s+", " ");
     }
+
+    private void RefreshGroups()
+    {
+        var groups = MoviesCollection
+            .GroupBy(m => string.IsNullOrWhiteSpace(m.BigFranchise) ? "Undefined" : m.BigFranchise)
+            .OrderBy(g => g.Key == "Undefined" ? "ZZZ" : g.Key) // Undefined at bottom
+            .Select(g =>
+            {
+                var group = new Movie.BigFranchiseGroup { Name = g.Key };
+                foreach (var movie in g.OrderBy(m => m.Franchise ?? m.Title)
+                                       .ThenBy(m => m.FranchiseNumber ?? 0))
+                {
+                    group.Movies.Add(movie);
+                }
+                return group;
+            });
+
+        BigFranchiseGroups.Clear();
+        foreach (var group in groups)
+            BigFranchiseGroups.Add(group);
+    }
+
+    private void RefreshBigFranchiseGroups()
+    {
+        BigFranchiseGroups.Clear();
+
+        // Group movies by BigFranchise
+        var groups = MoviesCollection
+            .GroupBy(m => string.IsNullOrWhiteSpace(m.BigFranchise) ? "Undefined" : m.BigFranchise)
+            .OrderBy(g => g.Key == "Undefined" ? "ZZZ" : g.Key); // Undefined goes last
+
+        foreach (var g in groups)
+        {
+            var group = new Movie.BigFranchiseGroup { Name = g.Key };
+            foreach (var m in g)
+                group.Movies.Add(m);
+            BigFranchiseGroups.Add(group);
+        }
+    }
+
 }
