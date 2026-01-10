@@ -7,7 +7,7 @@ namespace MediaTracker.Converters
 {
     public class MovieDateTupleConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length != 2) return null;
             if (values[0] is Movie movie && values[1] is DateTime dt)

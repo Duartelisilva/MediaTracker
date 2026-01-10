@@ -8,6 +8,8 @@ using System.Linq;
 using System.ComponentModel;
 using System.Windows.Data;
 using static MediaTracker.Domain.Movie;
+using System.Windows.Media;
+using System.Text.Json.Serialization;
 
 namespace MediaTracker.ViewModels;
 
@@ -47,6 +49,13 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         set { _newFranchiseNumber = value; OnPropertyChanged(); }
     }
 
+    private Color _newFranchiseColor = Colors.LightGray;
+    public Color NewFranchiseColor
+    {
+        get => _newFranchiseColor;
+        set { _newFranchiseColor = value; OnPropertyChanged(); }
+    }
+
     // New Watch Date
     private string? _newWatchDate;
     public string? NewWatchDate
@@ -63,10 +72,11 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
     public ICommand RemoveMovieCommand { get; }
     public ICommand EditMovieCommand { get; }
     public ICommand SaveMovieCommand { get; }
-
     public ICommand ToggleExpandCommand { get; }
+    public ICommand UndoMovieCommand { get; }
 
     private readonly IMediaRepository _repository;
+
 
     public MoviesTabViewModel()
     {
@@ -112,13 +122,69 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         RemoveMovieCommand = new RelayCommand(obj =>
         {
             if (obj is Movie movie)
+            {
+                var result = MessageBox.Show(
+                    $"Are you sure you want to delete '{movie.Title}'?",
+                    "Confirm Delete",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result != MessageBoxResult.Yes)
+                    return;
+            
                 RemoveMovie(movie);
+            }
+
         });
+
         EditMovieCommand = new RelayCommand(obj =>
         {
             if (obj is Movie movie)
+            {
+                // Check if another movie is already being edited
+                var otherEditing = MoviesCollection.FirstOrDefault(m => m != movie && m.IsEditing);
+                if (otherEditing != null)
+                {
+                    var result = MessageBox.Show(
+                        $"Movie '{otherEditing.Title}' is already being edited.\n\n" +
+                        "Click Yes to discard changes and edit this movie, or No to cancel.",
+                        "Editing in progress",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+
+                    if (result == MessageBoxResult.No)
+                    {
+                        // User chooses to cancel — do nothing
+                        return;
+                    }
+
+                    // User chooses Yes — undo previous edits
+                    otherEditing.Title = otherEditing.BackupTitle;
+                    otherEditing.Year = otherEditing.BackupYear;
+                    otherEditing.BigFranchise = otherEditing.BackupBigFranchise;
+                    otherEditing.Franchise = otherEditing.BackupFranchise;
+                    otherEditing.FranchiseNumber = otherEditing.BackupFranchiseNumber;
+                    otherEditing.Note = otherEditing.BackupNote;
+                    otherEditing.FranchiseColor = otherEditing.BackupFranchiseColor;
+
+                    otherEditing.IsEditing = false;
+                }
+
+                // Backup current values for the new movie
+                movie.BackupTitle = movie.Title;
+                movie.BackupYear = movie.Year;
+                movie.BackupBigFranchise = movie.BigFranchise;
+                movie.BackupFranchise = movie.Franchise;
+                movie.BackupFranchiseNumber = movie.FranchiseNumber;
+                movie.BackupNote = movie.Note;
+                movie.BackupFranchiseColor = movie.FranchiseColor;
+
+                // Enable edit mode for this movie
                 movie.IsEditing = true;
+            }
         });
+
+
         SaveMovieCommand = new RelayCommand(obj =>
         {
             if (obj is Movie movie)
@@ -141,6 +207,31 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
 
                 SaveMovies();
                 RefreshBigFranchiseGroups();
+                if (!string.IsNullOrWhiteSpace(movie.Franchise))
+                {
+                    foreach (var m in MoviesCollection)
+                    {
+                        if (m != movie && string.Equals(m.Franchise, movie.Franchise, StringComparison.OrdinalIgnoreCase))
+                            m.FranchiseColor = movie.FranchiseColor;
+                    }
+                }
+            }
+        });
+
+        UndoMovieCommand = new RelayCommand(obj =>
+        {
+            if (obj is Movie movie)
+            {
+                // Restore backup values
+                movie.Title = movie.BackupTitle;
+                movie.Year = movie.BackupYear;
+                movie.BigFranchise = movie.BackupBigFranchise;
+                movie.Franchise = movie.BackupFranchise;
+                movie.FranchiseNumber = movie.BackupFranchiseNumber;
+                movie.Note = movie.BackupNote;
+                movie.FranchiseColor = movie.BackupFranchiseColor;
+
+                movie.IsEditing = false;
             }
         });
     }
@@ -186,6 +277,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             return;
         }
 
+
         // Create movie
         var movie = new Movie
         {
@@ -193,8 +285,17 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             Franchise = hasFranchise ? trimmedFranchise : null,
             FranchiseNumber = hasFranchiseNumber ? NewFranchiseNumber : null,
             BigFranchise = NewBigFranchise,
-            Year = NewYear
+            Year = NewYear,
         };
+
+        if (!string.IsNullOrWhiteSpace(trimmedFranchise))
+        {
+            var existing = MoviesCollection.FirstOrDefault(m =>
+                string.Equals(m.Franchise, trimmedFranchise, StringComparison.OrdinalIgnoreCase));
+
+            if (existing != null)
+                movie.FranchiseColor = existing.FranchiseColor; // inherit color from existing franchise
+        }
 
         MoviesCollection.Add(movie);
 
@@ -251,6 +352,13 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
     {
         var movie = param.Item1;
         var date = param.Item2;
+        var result = MessageBox.Show(
+            $"Are you sure you want to delete '{movie.Title}'?",
+            "Confirm Delete",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+        if (result != MessageBoxResult.No)
+            return; // user canceled
 
         movie?.WatchDates.Remove(date);
 
@@ -311,7 +419,6 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             movie.FranchiseNumber = null;
         }
 
-
         // Check for duplicates excluding itself
         bool exists = MoviesCollection.Any(m =>
             m != movie &&
@@ -327,7 +434,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
 
         // If everything passes, update trimmed values
         movie.Title = title;
-        movie.Franchise = franchise;
+        movie.Franchise = Normalize(franchise);
         movie.Note = movie.Note?.Trim();
         return true;
     }

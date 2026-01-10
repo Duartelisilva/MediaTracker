@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converters="clr-namespace:MediaTracker.Converters"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="700"
              Background="#ECECEC">
@@ -15,6 +16,7 @@
         <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
         <converters:NullOrEmptyToSeparatorConverter x:Key="NullOrEmptyToSeparatorConverter"/>
         <converters:CollapseArrowConverter x:Key="CollapseArrowConverter"/>
+        
         
         <!-- Shadow effect for modern cards -->
         <DropShadowEffect x:Key="CardShadow" Color="#333" Opacity="0.1" BlurRadius="12"/>
@@ -107,11 +109,11 @@
                                     <DataTemplate>
                                         <!-- BEGIN: Movie Card -->
                                         <Border Width="280"
-                                        Margin="0,0,16,16"
-                                        Padding="12"
-                                        CornerRadius="12"
-                                        Background="#F0F0F0"
-                                        Effect="{StaticResource CardShadow}">
+                                                Margin="0,0,16,16"
+                                                Padding="12"
+                                                CornerRadius="12"
+                                                Background="{Binding FranchiseBrush}"   
+                                                Effect="{StaticResource CardShadow}">
                                             <Border.InputBindings>
                                                 <MouseBinding Gesture="LeftClick"
                                                       Command="{Binding DataContext.ToggleExpandCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
@@ -129,36 +131,40 @@
                                                     <StackPanel>
                                                         <!-- DISPLAY MODE -->
                                                         <StackPanel Orientation="Vertical" Margin="0,4,0,0"
-                                                            Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
+            Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
 
-                                                            <!-- Title -->
-                                                            <TextBlock Text="{Binding Title}"
-                                                               FontSize="16"
-                                                               FontWeight="Bold"
-                                                               Foreground="#222"
-                                                               TextWrapping="Wrap"
-                                                               MaxWidth="260"/>
-
-                                                            <!-- Info line -->
-                                                            <TextBlock Foreground="#555" TextWrapping="Wrap" MaxWidth="260">
-                                                        <TextBlock Text="{Binding DisplayMeta}"
-                                                                   Foreground="#555"
-                                                                   TextWrapping="Wrap"/>
-                                                    </TextBlock>
+                                                            <!-- Semi-transparent background for all text -->
+                                                            <Border Background="#80000000" CornerRadius="4" Padding="6" MaxWidth="260">
+                                                                <StackPanel>
+                                                                    <!-- Title -->
+                                                                    <TextBlock Text="{Binding Title}"
+                                                                               FontSize="16"
+                                                                               FontWeight="Bold"
+                                                                               Foreground="White"
+                                                                               TextWrapping="Wrap"/>
+                                                                    <!-- Info line -->
+                                                                    <TextBlock Text="{Binding DisplayMeta}"
+                                                                               FontSize="12"
+                                                                               Foreground="White"
+                                                                               TextWrapping="Wrap"/>
+                                                                </StackPanel>
+                                                            </Border>
 
                                                         </StackPanel>
 
                                                         <!-- EDIT MODE -->
                                                         <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}">
                                                             <!-- Title -->
-                                                            <TextBox Text="{Binding Title}"
+                                                            <xctk:WatermarkTextBox Text="{Binding Title}"
+                                                             Watermark="Title"
                                                              FontSize="15"
                                                              Padding="4"
                                                              Margin="0,0,0,6"
                                                              MaxWidth="200"/>
 
                                                             <!-- Big Franchise -->
-                                                            <TextBox Text="{Binding BigFranchise}"
+                                                            <xctk:WatermarkTextBox Text="{Binding BigFranchise}"
+                                                             Watermark="Big Franchise"
                                                              Padding="4"
                                                              Margin="0,0,0,6"/>
 
@@ -170,33 +176,53 @@
                                                                     <ColumnDefinition Width="50"/>
                                                                 </Grid.ColumnDefinitions>
 
-                                                                <TextBox Grid.Column="0" Text="{Binding Year}" Margin="0,0,6,0"/>
-                                                                <TextBox Grid.Column="1"
+                                                                <xctk:WatermarkTextBox Grid.Column="0" Text="{Binding Year}" Watermark="Year" Margin="0,0,6,0"/>
+                                                                <xctk:WatermarkTextBox Grid.Column="1"
                                                                  Text="{Binding Franchise, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
-                                                                 Margin="0,0,6,0"/>
-                                                                <TextBox Grid.Column="2"
-                                                                 Text="{Binding FranchiseNumber, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
+                                                                 Watermark="Franchise" Margin="0,0,6,0"/>
+                                                                <xctk:WatermarkTextBox Grid.Column="2"
+                                                                 Text="{Binding FranchiseNumber, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Watermark="#"/>
                                                             </Grid>
+                                                            <xctk:ColorPicker
+                                                                        SelectedColor="{Binding FranchiseColor, Mode=TwoWay}"
+                                                                        Margin="0,6,0,6"
+                                                                        Width="120"/>
                                                         </StackPanel>
                                                     </StackPanel>
 
                                                     <!-- ACTION BUTTONS -->
+                                                    <!-- ACTION BUTTONS -->
                                                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+
+                                                        <!-- Edit Button (only when not editing) -->
                                                         <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Edit"
-                                                        Command="{Binding DataContext.EditMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        CommandParameter="{Binding}"
-                                                        Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"
-                                                        Background="#EEE" Foreground="#333" BorderThickness="0" Margin="0,0,4,0"/>
-                                                        <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Save"
-                                                        Command="{Binding DataContext.SaveMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        CommandParameter="{Binding}"
-                                                        Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                        Background="#4CAF50" Foreground="White" BorderThickness="0" Margin="0,0,4,0"/>
+                                                                Command="{Binding DataContext.EditMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"
+                                                                Background="#EEE" Foreground="#333" BorderThickness="0" Margin="0,0,4,0"/>
+
+                                                        <!-- Delete Button (only when not editing) -->
                                                         <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Delete"
-                                                        Command="{Binding DataContext.RemoveMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        CommandParameter="{Binding}"
-                                                        Background="#F44336" Foreground="White" BorderThickness="0"/>
+                                                                Command="{Binding DataContext.RemoveMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"
+                                                                Background="#F44336" Foreground="White" BorderThickness="0" Margin="0,0,4,0"/>
+
+                                                        <!-- Save Button (only when editing) -->
+                                                        <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Save"
+                                                                Command="{Binding DataContext.SaveMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                                Background="#4CAF50" Foreground="White" BorderThickness="0" Margin="0,0,4,0"/>
+
+                                                        <!-- Undo Button (only when editing) -->
+                                                        <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Undo"
+                                                                Command="{Binding DataContext.UndoMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                                Background="#FFC107" Foreground="White" BorderThickness="0"/>
                                                     </StackPanel>
+
                                                 </Grid>
 
                                                 <!-- NOTE -->

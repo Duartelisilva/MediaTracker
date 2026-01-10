@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
+using System.Windows.Media;
 
 namespace MediaTracker.Domain;
 
@@ -11,6 +13,7 @@ public class Movie : INotifyPropertyChanged
     private int _year;
     private string? _franchise;
     private int? _franchiseNumber;
+    private Color _franchiseColor = Colors.Transparent;
 
     private string? _bigFranchise;
     public string? BigFranchise
@@ -44,13 +47,58 @@ public class Movie : INotifyPropertyChanged
     public string? Franchise
     {
         get => _franchise;
-        set { _franchise = string.IsNullOrWhiteSpace(value) ? null : Normalize(value); OnPropertyChanged(); }
+        set
+        {
+            _franchise = value; // always keep what user types
+            OnPropertyChanged();
+        }
     }
 
     public int? FranchiseNumber
     {
         get => _franchiseNumber;
         set { _franchiseNumber = value; OnPropertyChanged(); }
+    }
+
+    public Color FranchiseColor
+    {
+        get => _franchiseColor;
+        set
+        {
+            _franchiseColor = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(FranchiseBrush));
+        }
+    }
+
+    [JsonIgnore] public string BackupTitle { get; set; } = "";
+    [JsonIgnore] public int BackupYear { get; set; }
+    [JsonIgnore] public string? BackupBigFranchise { get; set; }
+    [JsonIgnore] public string? BackupFranchise { get; set; }
+    [JsonIgnore] public int? BackupFranchiseNumber { get; set; }
+    [JsonIgnore] public string? BackupNote { get; set; }
+
+    [JsonIgnore] public System.Windows.Media.Color BackupFranchiseColor { get; set; }
+    [JsonIgnore]
+    public SolidColorBrush FranchiseBrush =>
+    FranchiseColor == Colors.Transparent
+        ? Brushes.LightGray
+        : new SolidColorBrush(FranchiseColor);
+
+    [JsonIgnore]
+    public SolidColorBrush FranchiseTextBrush
+    {
+        get
+        {
+            // Use LightGray as background fallback
+            Color bg = FranchiseColor == Colors.Transparent ? Colors.LightGray : FranchiseColor;
+
+            // Compute luminance (0=dark, 1=light)
+            double luminance = (0.299 * bg.R + 0.587 * bg.G + 0.114 * bg.B) / 255;
+
+            // Return contrasting color
+            return luminance > 0.5 ? Brushes.Black : Brushes.White;
+        }
     }
 
     public bool IsEditing
@@ -77,7 +125,6 @@ public class Movie : INotifyPropertyChanged
         };
 
     }
-
 
     public ObservableCollection<DateTime> WatchDates { get; set; } = new();
     public DateTime? LastWatchedDate =>
@@ -115,8 +162,7 @@ public class Movie : INotifyPropertyChanged
         {
             var parts = new List<string>();
 
-            if (Year != null)
-                parts.Add(Year.ToString());
+            parts.Add(Year.ToString());
 
             if (!string.IsNullOrWhiteSpace(Franchise))
             {
