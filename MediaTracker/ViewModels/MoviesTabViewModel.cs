@@ -63,6 +63,13 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         get => _newWatchDate;
         set { _newWatchDate = value?.Trim(); OnPropertyChanged(); }
     }
+
+    private bool _showComments;
+    public bool ShowComments
+    {
+        get => _showComments;
+        set { _showComments = value; OnPropertyChanged(); }
+    }
     public ObservableCollection<SagaGroup> SagaGroups { get; } = new();
 
     // Commands
