@@ -41,41 +41,48 @@
                     <!-- Title -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Title:" FontSize="12" Foreground="#555"/>
-                        <TextBox Width="180" Height="36" Padding="4"
-                         Text="{Binding NewTitle}" />
+                        <xctk:WatermarkTextBox Width="180" Height="36" Padding="4"
+                         Text="{Binding NewTitle}" Watermark="Title"/>
                     </StackPanel>
 
                     <!-- Year -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Year:" FontSize="12" Foreground="#555"/>
-                        <TextBox Width="60" Height="36" Padding="4"
-                         Text="{Binding NewYear}" />
+                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4"
+                         Text="{Binding NewYear}" Watermark="Year"/>
                     </StackPanel>
 
-                    <!-- Big Franchise -->
+                    <!-- Saga -->
                     <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Big Franchise:" FontSize="12" Foreground="#555"/>
-                        <TextBox Width="120" Height="36" Padding="4"
-                         Text="{Binding NewBigFranchise}" />
+                        <TextBlock Text="Saga:" FontSize="12" Foreground="#555"/>
+                        <xctk:WatermarkTextBox Width="120" Height="36" Padding="4"
+                         Text="{Binding NewSaga}" Watermark="Saga"/>
                     </StackPanel>
 
                     <!-- Franchise -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Franchise:" FontSize="12" Foreground="#555"/>
-                        <TextBox Width="120" Height="36" Padding="4"
-                         Text="{Binding NewFranchise}" />
+                        <xctk:WatermarkTextBox Width="120" Height="36" Padding="4"
+                         Text="{Binding NewFranchise}" Watermark="Franchise"/>
                     </StackPanel>
 
                     <!-- Franchise Number -->
                     <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Franchise #:" FontSize="12" Foreground="#555"/>
-                        <TextBox Width="50" Height="36" Padding="4"
-                         Text="{Binding NewFranchiseNumber}" />
+                        <TextBlock Text="Franchise #:" Height="16" FontSize="12" Foreground="#555"/>
+                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4"
+                         Text="{Binding NewFranchiseNumber}" Watermark="#" />
                     </StackPanel>
 
                     <!-- Add Button -->
-                    <Button Content="Add" Height="36" Padding="20,6" Background="#4CAF50" Foreground="White"
-                    Command="{Binding AddMovieCommand}"/>
+                    <StackPanel Margin="0,0,12,0">
+                        <TextBlock Height="16"/>
+                        <Button Content="Add"
+                                Height="36"
+                                Padding="20,6"
+                                Background="#4CAF50"
+                                Foreground="White"
+                                Command="{Binding AddMovieCommand}"/>
+                    </StackPanel>
                 </StackPanel>
             </ScrollViewer>
         </Border>
@@ -84,19 +91,19 @@
 
         <!-- MOVIE LIST -->
         <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding BigFranchiseGroups}">
+            <ItemsControl ItemsSource="{Binding SagaGroups}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0,0,0,24">
-                            <!-- Big Franchise Header -->
+                            <!-- Saga Header -->
                             <StackPanel Orientation="Horizontal" Cursor="Hand"
-                                MouseLeftButtonUp="BigFranchiseHeader_Click">
+                                MouseLeftButtonUp="SagaHeader_Click">
                                 <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="18"/>
                                 <TextBlock Text="{Binding IsCollapsed, Converter={StaticResource CollapseArrowConverter}}" 
                                    Margin="6,0,0,0"/>
                             </StackPanel>
 
-                            <!-- Movies under this Big Franchise -->
+                            <!-- Movies under this Saga -->
                             <ItemsControl ItemsSource="{Binding Movies}" 
                                     Visibility="{Binding IsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
                                 <ItemsControl.ItemsPanel>
@@ -131,7 +138,7 @@
                                                     <StackPanel>
                                                         <!-- DISPLAY MODE -->
                                                         <StackPanel Orientation="Vertical" Margin="0,4,0,0"
-            Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
+                                                                    Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
 
                                                             <!-- Semi-transparent background for all text -->
                                                             <Border Background="#80000000" CornerRadius="4" Padding="6" MaxWidth="260">
@@ -162,9 +169,9 @@
                                                              Margin="0,0,0,6"
                                                              MaxWidth="200"/>
 
-                                                            <!-- Big Franchise -->
-                                                            <xctk:WatermarkTextBox Text="{Binding BigFranchise}"
-                                                             Watermark="Big Franchise"
+                                                            <!-- Saga -->
+                                                            <xctk:WatermarkTextBox Text="{Binding Saga}"
+                                                             Watermark="Saga"
                                                              Padding="4"
                                                              Margin="0,0,0,6"/>
 

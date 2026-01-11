@@ -15,11 +15,11 @@ public class Movie : INotifyPropertyChanged
     private int? _franchiseNumber;
     private Color _franchiseColor = Colors.Transparent;
 
-    private string? _bigFranchise;
-    public string? BigFranchise
+    private string? _saga;
+    public string? Saga
     {
-        get => _bigFranchise;
-        set { _bigFranchise = value; OnPropertyChanged(); }
+        get => _saga;
+        set { _saga = value; OnPropertyChanged(); }
     }
 
     private string? _note;
@@ -73,7 +73,7 @@ public class Movie : INotifyPropertyChanged
 
     [JsonIgnore] public string BackupTitle { get; set; } = "";
     [JsonIgnore] public int BackupYear { get; set; }
-    [JsonIgnore] public string? BackupBigFranchise { get; set; }
+    [JsonIgnore] public string? BackupSaga { get; set; }
     [JsonIgnore] public string? BackupFranchise { get; set; }
     [JsonIgnore] public int? BackupFranchiseNumber { get; set; }
     [JsonIgnore] public string? BackupNote { get; set; }
@@ -178,7 +178,7 @@ public class Movie : INotifyPropertyChanged
             return string.Join(" • ", parts);
         }
     }
-    public class BigFranchiseGroup : INotifyPropertyChanged
+    public class SagaGroup : INotifyPropertyChanged
     {
         public string Name { get; set; } = "Undefined";
         public ObservableCollection<Movie> Movies { get; } = new();

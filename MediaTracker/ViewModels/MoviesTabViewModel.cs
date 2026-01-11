@@ -34,11 +34,11 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         set { _newFranchise = Normalize(value); OnPropertyChanged(); }
     }
 
-    private string? _newBigFranchise;
-    public string? NewBigFranchise
+    private string? _newSaga;
+    public string? NewSaga
     {
-        get => _newBigFranchise;
-        set { _newBigFranchise = Normalize(value); OnPropertyChanged(); }
+        get => _newSaga;
+        set { _newSaga = Normalize(value); OnPropertyChanged(); }
     }
     public int NewYear { get; set; } = DateTime.Now.Year;
 
@@ -63,7 +63,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         get => _newWatchDate;
         set { _newWatchDate = value?.Trim(); OnPropertyChanged(); }
     }
-    public ObservableCollection<BigFranchiseGroup> BigFranchiseGroups { get; } = new();
+    public ObservableCollection<SagaGroup> SagaGroups { get; } = new();
 
     // Commands
     public ICommand AddMovieCommand { get; }
@@ -88,8 +88,8 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
 
         var collectionView = CollectionViewSource.GetDefaultView(MoviesCollection);
         collectionView.GroupDescriptions.Clear();
-        collectionView.GroupDescriptions.Add(new PropertyGroupDescription("BigFranchise"));
-        MoviesCollection.CollectionChanged += (_, __) => RefreshBigFranchiseGroups();
+        collectionView.GroupDescriptions.Add(new PropertyGroupDescription("Saga"));
+        MoviesCollection.CollectionChanged += (_, __) => RefreshSagaGroups();
 
         ToggleExpandCommand = new RelayCommand(obj =>
         {
@@ -109,7 +109,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             movie.IsExpanded = false;
             MoviesCollection.Add(movie);
         }
-        RefreshBigFranchiseGroups();
+        RefreshSagaGroups();
 
         AddMovieCommand = new RelayCommand(_ => AddMovie());
         AddWatchDateCommand = new RelayCommand(obj => AddWatchDate((Movie)obj!));
@@ -161,7 +161,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
                     // User chooses Yes — undo previous edits
                     otherEditing.Title = otherEditing.BackupTitle;
                     otherEditing.Year = otherEditing.BackupYear;
-                    otherEditing.BigFranchise = otherEditing.BackupBigFranchise;
+                    otherEditing.Saga = otherEditing.BackupSaga;
                     otherEditing.Franchise = otherEditing.BackupFranchise;
                     otherEditing.FranchiseNumber = otherEditing.BackupFranchiseNumber;
                     otherEditing.Note = otherEditing.BackupNote;
@@ -173,7 +173,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
                 // Backup current values for the new movie
                 movie.BackupTitle = movie.Title;
                 movie.BackupYear = movie.Year;
-                movie.BackupBigFranchise = movie.BigFranchise;
+                movie.BackupSaga = movie.Saga;
                 movie.BackupFranchise = movie.Franchise;
                 movie.BackupFranchiseNumber = movie.FranchiseNumber;
                 movie.BackupNote = movie.Note;
@@ -206,7 +206,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
                     MoviesCollection.Add(m);
 
                 SaveMovies();
-                RefreshBigFranchiseGroups();
+                RefreshSagaGroups();
                 if (!string.IsNullOrWhiteSpace(movie.Franchise))
                 {
                     foreach (var m in MoviesCollection)
@@ -225,7 +225,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
                 // Restore backup values
                 movie.Title = movie.BackupTitle;
                 movie.Year = movie.BackupYear;
-                movie.BigFranchise = movie.BackupBigFranchise;
+                movie.Saga = movie.BackupSaga;
                 movie.Franchise = movie.BackupFranchise;
                 movie.FranchiseNumber = movie.BackupFranchiseNumber;
                 movie.Note = movie.BackupNote;
@@ -284,7 +284,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             Title = trimmedTitle,
             Franchise = hasFranchise ? trimmedFranchise : null,
             FranchiseNumber = hasFranchiseNumber ? NewFranchiseNumber : null,
-            BigFranchise = NewBigFranchise,
+            Saga = NewSaga,
             Year = NewYear,
         };
 
@@ -312,11 +312,11 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
 
         RefreshGroups();
         SaveMovies();
-        RefreshBigFranchiseGroups();
+        RefreshSagaGroups();
 
         NewTitle = "";
         NewYear = DateTime.Now.Year;
-        NewBigFranchise = "";
+        NewSaga = "";
         NewFranchise = "";
         NewFranchiseNumber = null;
         NewWatchDate = "";
@@ -375,7 +375,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
 
         MoviesCollection.Remove(movie); // UI updates automatically because it's ObservableCollection
         SaveMovies();                  // persist changes to JSON
-        RefreshBigFranchiseGroups();
+        RefreshSagaGroups();
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -450,11 +450,11 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
     private void RefreshGroups()
     {
         var groups = MoviesCollection
-            .GroupBy(m => string.IsNullOrWhiteSpace(m.BigFranchise) ? "Undefined" : m.BigFranchise)
+            .GroupBy(m => string.IsNullOrWhiteSpace(m.Saga) ? "Undefined" : m.Saga)
             .OrderBy(g => g.Key == "Undefined" ? "ZZZ" : g.Key) // Undefined at bottom
             .Select(g =>
             {
-                var group = new Movie.BigFranchiseGroup { Name = g.Key };
+                var group = new Movie.SagaGroup { Name = g.Key };
                 foreach (var movie in g.OrderBy(m => m.Franchise ?? m.Title)
                                        .ThenBy(m => m.FranchiseNumber ?? 0))
                 {
@@ -463,26 +463,26 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
                 return group;
             });
 
-        BigFranchiseGroups.Clear();
+        SagaGroups.Clear();
         foreach (var group in groups)
-            BigFranchiseGroups.Add(group);
+            SagaGroups.Add(group);
     }
 
-    private void RefreshBigFranchiseGroups()
+    private void RefreshSagaGroups()
     {
-        BigFranchiseGroups.Clear();
+        SagaGroups.Clear();
 
-        // Group movies by BigFranchise
+        // Group movies by Saga
         var groups = MoviesCollection
-            .GroupBy(m => string.IsNullOrWhiteSpace(m.BigFranchise) ? "Undefined" : m.BigFranchise)
+            .GroupBy(m => string.IsNullOrWhiteSpace(m.Saga) ? "Undefined" : m.Saga)
             .OrderBy(g => g.Key == "Undefined" ? "ZZZ" : g.Key); // Undefined goes last
 
         foreach (var g in groups)
         {
-            var group = new Movie.BigFranchiseGroup { Name = g.Key };
+            var group = new Movie.SagaGroup { Name = g.Key };
             foreach (var m in g)
                 group.Movies.Add(m);
-            BigFranchiseGroups.Add(group);
+            SagaGroups.Add(group);
         }
     }
 
