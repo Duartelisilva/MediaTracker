@@ -29,7 +29,21 @@ public class Movie : INotifyPropertyChanged
     public bool IsExpanded
     {
         get => _isExpanded;
-        set { _isExpanded = value; OnPropertyChanged(); }
+        set
+        {
+            if (_isExpanded != value)
+            {
+                _isExpanded = value;
+                OnPropertyChanged();
+
+                if (!_isExpanded)
+                {
+                    // Collapse happened — clear the shared input
+                    // Access the ViewModel's property via an event or callback
+                    ClearNewWatchDate?.Invoke();
+                }
+            }
+        }
     }
 
     public string Title
@@ -71,12 +85,25 @@ public class Movie : INotifyPropertyChanged
         }
     }
 
+    private bool _datesPanelIsExpanded;
+    public bool DatesPanelIsExpanded
+    {
+        get => _datesPanelIsExpanded;
+        set
+        {
+            _datesPanelIsExpanded = value;
+            OnPropertyChanged();
+        }
+    }
+
     [JsonIgnore] public string BackupTitle { get; set; } = "";
     [JsonIgnore] public int BackupYear { get; set; }
     [JsonIgnore] public string? BackupSaga { get; set; }
     [JsonIgnore] public string? BackupFranchise { get; set; }
     [JsonIgnore] public int? BackupFranchiseNumber { get; set; }
     [JsonIgnore] public string? BackupNote { get; set; }
+    
+    [JsonIgnore] public Action? ClearNewWatchDate;
 
     [JsonIgnore] public System.Windows.Media.Color BackupFranchiseColor { get; set; }
     [JsonIgnore]
@@ -144,7 +171,7 @@ public class Movie : INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
-    private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+    public void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     private static string Normalize(string? text)

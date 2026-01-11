@@ -108,8 +108,15 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         {
             movie.IsExpanded = false;
             MoviesCollection.Add(movie);
+
         }
         RefreshSagaGroups();
+
+        // Attach collapse callback
+        foreach (var movie in MoviesCollection)
+        {
+            movie.ClearNewWatchDate = () => NewWatchDate = "";
+        }
 
         AddMovieCommand = new RelayCommand(_ => AddMovie());
         AddWatchDateCommand = new RelayCommand(obj => AddWatchDate((Movie)obj!));
@@ -215,6 +222,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
                             m.FranchiseColor = movie.FranchiseColor;
                     }
                 }
+                movie.IsExpanded = false;
             }
         });
 
@@ -342,7 +350,21 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             return;
         }
 
-        movie.WatchDates.Add(date);
+        if (!movie.WatchDates.Contains(date))
+            movie.WatchDates.Add(date);
+
+        // Sort dates descending
+        var sorted = movie.WatchDates.OrderByDescending(d => d).ToList();
+        movie.WatchDates.Clear();
+        foreach (var d in sorted)
+            movie.WatchDates.Add(d);
+
+        // Refresh computed properties
+
+        movie.OnPropertyChanged(nameof(movie.LastWatchedDate));
+        movie.OnPropertyChanged(nameof(movie.Seen));
+        movie.OnPropertyChanged(nameof(movie.DisplayMeta));
+
         NewWatchDate = "";
         OnPropertyChanged(nameof(NewWatchDate));
         SaveMovies();
@@ -353,15 +375,18 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         var movie = param.Item1;
         var date = param.Item2;
         var result = MessageBox.Show(
-            $"Are you sure you want to delete '{movie.Title}'?",
+            $"Are you sure you want to delete the watch date {date:dd/MM/yyyy} for '{movie.Title}'?",
             "Confirm Delete",
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning);
-        if (result != MessageBoxResult.No)
+        if (result != MessageBoxResult.Yes)
             return; // user canceled
 
         movie?.WatchDates.Remove(date);
 
+        movie?.OnPropertyChanged(nameof(movie.LastWatchedDate));
+        movie?.OnPropertyChanged(nameof(movie.Seen));
+        movie?.OnPropertyChanged(nameof(movie.DisplayMeta));
         SaveMovies();
     }
     private void SaveMovies()
@@ -485,5 +510,4 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             SagaGroups.Add(group);
         }
     }
-
 }

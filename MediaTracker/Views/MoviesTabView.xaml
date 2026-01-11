@@ -16,8 +16,8 @@
         <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
         <converters:NullOrEmptyToSeparatorConverter x:Key="NullOrEmptyToSeparatorConverter"/>
         <converters:CollapseArrowConverter x:Key="CollapseArrowConverter"/>
-        
-        
+        <converters:ExpandWhileNotEditingConverter x:Key="ExpandWhileNotEditingConverter"/>
+
         <!-- Shadow effect for modern cards -->
         <DropShadowEffect x:Key="CardShadow" Color="#333" Opacity="0.1" BlurRadius="12"/>
     </UserControl.Resources>
@@ -120,13 +120,8 @@
                                                 Padding="12"
                                                 CornerRadius="12"
                                                 Background="{Binding FranchiseBrush}"   
-                                                Effect="{StaticResource CardShadow}">
-                                            <Border.InputBindings>
-                                                <MouseBinding Gesture="LeftClick"
-                                                      Command="{Binding DataContext.ToggleExpandCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                      CommandParameter="{Binding}"/>
-                                            </Border.InputBindings>
-
+                                                Effect="{StaticResource CardShadow}"
+                                                MouseLeftButtonUp="CardBorder_MouseLeftButtonUp">
                                             <StackPanel>
                                                 <!-- HEADER -->
                                                 <Grid>
@@ -198,7 +193,6 @@
                                                     </StackPanel>
 
                                                     <!-- ACTION BUTTONS -->
-                                                    <!-- ACTION BUTTONS -->
                                                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
 
                                                         <!-- Edit Button (only when not editing) -->
@@ -244,8 +238,13 @@
                                                 </Border>
 
                                                 <!-- WATCH DATES -->
-                                                <StackPanel Margin="0,10,0,0"
-                                                    Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <StackPanel Margin="0,10,0,0">
+                                                    <StackPanel.Visibility>
+                                                        <MultiBinding Converter="{StaticResource ExpandWhileNotEditingConverter}">
+                                                            <Binding Path="IsExpanded"/>
+                                                            <Binding Path="IsEditing"/>
+                                                        </MultiBinding>
+                                                    </StackPanel.Visibility>
                                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                                                         <TextBox Width="120" Text="{Binding DataContext.NewWatchDate, RelativeSource={RelativeSource AncestorType=UserControl}}" Height="28" Padding="4"/>
                                                         <Button Content="Add" Margin="6,0,0,0"

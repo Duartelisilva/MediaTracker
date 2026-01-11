@@ -2,6 +2,7 @@
 using static MediaTracker.Domain.Movie;
 using System.Windows.Input;
 using MediaTracker.Domain;
+using MediaTracker.ViewModels;
 
 namespace MediaTracker.Views;
 
@@ -19,5 +20,20 @@ public partial class MoviesTabView : UserControl
         }
     }
 
+    private void CardBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        // Prevent toggle if the click was on a button
+        if (e.OriginalSource is Button)
+            return;
 
+        if (sender is Border border && border.DataContext is Movie movie)
+        {
+            // Collapse other movies
+            foreach (var m in ((MoviesTabViewModel)DataContext).MoviesCollection)
+                if (m != movie) m.IsExpanded = false;
+
+            // Toggle clicked movie
+            movie.IsExpanded = !movie.IsExpanded;
+        }
+    }
 }
