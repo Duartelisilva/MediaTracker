@@ -17,6 +17,7 @@
         <converters:NullOrEmptyToSeparatorConverter x:Key="NullOrEmptyToSeparatorConverter"/>
         <converters:CollapseArrowConverter x:Key="CollapseArrowConverter"/>
         <converters:ExpandWhileNotEditingConverter x:Key="ExpandWhileNotEditingConverter"/>
+        <converters:BoolToTextConverter x:Key="BoolToTextConverter"/>
 
         <!-- Shadow effect for modern cards -->
         <DropShadowEffect x:Key="CardShadow" Color="#333" Opacity="0.1" BlurRadius="12"/>
@@ -142,6 +143,16 @@
                                                                                FontSize="12"
                                                                                Foreground="White"
                                                                                TextWrapping="Wrap"/>
+                                                                    <Button Content="{Binding IsExpanded,
+                                                                                              Converter={StaticResource BoolToTextConverter},
+                                                                                              ConverterParameter='Show dates|Hide dates'}"
+                                                                            Margin="0,6,0,0"
+                                                                            Padding="8,2"
+                                                                            FontSize="11"
+                                                                            HorizontalAlignment="Left"
+                                                                            Command="{Binding DataContext.ToggleExpandCommand,
+                                                                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                            CommandParameter="{Binding}"/>
                                                                 </StackPanel>
                                                             </Border>
 

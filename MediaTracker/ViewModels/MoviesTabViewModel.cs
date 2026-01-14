@@ -102,10 +102,6 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         {
             if (obj is Movie movie)
             {
-                // Collapse all other movies first
-                foreach (var m in MoviesCollection)
-                    if (m != movie) m.IsExpanded = false;
-
                 // Toggle the clicked movie
                 movie.IsExpanded = !movie.IsExpanded;
             }
