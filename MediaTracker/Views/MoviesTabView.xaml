@@ -18,6 +18,7 @@
         <converters:CollapseArrowConverter x:Key="CollapseArrowConverter"/>
         <converters:ExpandWhileNotEditingConverter x:Key="ExpandWhileNotEditingConverter"/>
         <converters:BoolToTextConverter x:Key="BoolToTextConverter"/>
+        <converters:LightBackgroundToForegroundConverter x:Key="LightBackgroundToForegroundConverter"/>
 
         <!-- Shadow effect for modern cards -->
         <DropShadowEffect x:Key="CardShadow" Color="#333" Opacity="0.1" BlurRadius="12"/>
@@ -25,7 +26,9 @@
         <!-- Shadow effect for Edit/Delete/Undo/Save buttons -->
         <DropShadowEffect x:Key="IconShadow" Color="Black" BlurRadius="4" ShadowDepth="0" Opacity="0.45"/>
     </UserControl.Resources>
+    
 
+    
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -108,214 +111,215 @@
 
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <!-- BEGIN: Movie Card -->
-                                        <Border Width="280"
-                                                Margin="0,0,16,16"
-                                                Padding="12"
-                                                CornerRadius="12"
-                                                Background="{Binding FranchiseBrush}"   
-                                                Effect="{StaticResource CardShadow}"
-                                                MouseLeftButtonUp="CardBorder_MouseLeftButtonUp">
-                                            <StackPanel>
-                                                <!-- HEADER -->
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-
-                                                    <StackPanel>
-                                                        <!-- DISPLAY MODE -->
-                                                        <StackPanel Orientation="Vertical" Margin="0,4,0,0"
-                                                                    Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
-
-                                                            <!-- Semi-transparent background for all text -->
-                                                            <Border Background="#80000000" CornerRadius="4" Padding="6" MaxWidth="260">
-                                                                <StackPanel>
-                                                                    <!-- Title -->
-                                                                    <TextBlock Text="{Binding Title}"
-                                                                               FontSize="16"
-                                                                               FontWeight="Bold"
-                                                                               Foreground="White"
-                                                                               TextWrapping="Wrap"/>
-                                                                    <!-- Info line -->
-                                                                    <TextBlock Text="{Binding DisplayMeta}"
-                                                                               FontSize="12"
-                                                                               Foreground="White"
-                                                                               TextWrapping="Wrap"/>
-                                                                    <Button Content="{Binding IsExpanded,
-                                                                                              Converter={StaticResource BoolToTextConverter},
-                                                                                              ConverterParameter='Show dates|Hide dates'}"
-                                                                            Margin="0,6,0,0"
-                                                                            Padding="8,2"
-                                                                            FontSize="11"
-                                                                            HorizontalAlignment="Left"
-                                                                            Command="{Binding DataContext.ToggleExpandCommand,
-                                                                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                                            CommandParameter="{Binding}"/>
-                                                                </StackPanel>
-                                                            </Border>
-
-                                                        </StackPanel>
-
-                                                        <!-- EDIT MODE -->
-                                                        <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                            <!-- Title -->
-                                                            <xctk:WatermarkTextBox Text="{Binding Title}"
-                                                             Watermark="Title"
-                                                             FontSize="15"
-                                                             Padding="4"
-                                                             Margin="0,0,0,6"
-                                                             MaxWidth="200"/>
-
-                                                            <!-- Saga -->
-                                                            <xctk:WatermarkTextBox Text="{Binding Saga}"
-                                                             Watermark="Saga"
-                                                             Padding="4"
-                                                             Margin="0,0,0,6"/>
-
-                                                            <!-- Year / Franchise / Franchise Number -->
-                                                            <Grid>
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="60"/>
-                                                                    <ColumnDefinition Width="*"/>
-                                                                    <ColumnDefinition Width="50"/>
-                                                                </Grid.ColumnDefinitions>
-
-                                                                <xctk:WatermarkTextBox Grid.Column="0" Text="{Binding Year}" Watermark="Year" Margin="0,0,6,0"/>
-                                                                <xctk:WatermarkTextBox Grid.Column="1"
-                                                                 Text="{Binding Franchise, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
-                                                                 Watermark="Franchise" Margin="0,0,6,0"/>
-                                                                <xctk:WatermarkTextBox Grid.Column="2"
-                                                                 Text="{Binding FranchiseNumber, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Watermark="#"/>
-                                                            </Grid>
-                                                            <xctk:ColorPicker
-                                                                        SelectedColor="{Binding FranchiseColor, Mode=TwoWay}"
-                                                                        Margin="0,6,0,6"
-                                                                        Width="120"/>
-                                                        </StackPanel>
-                                                    </StackPanel>
-
-                                                    <!-- ACTION BUTTONS -->
-                                                    <Grid Grid.Column="1" VerticalAlignment="Top" Margin="10,14,0,0">
+                                        <Grid>
+                                            <!-- BEGIN: Movie Card -->
+                                            <Border Width="280"
+                                                    Margin="0,0,16,16"
+                                                    Padding="12"
+                                                    CornerRadius="12"
+                                                    BorderBrush="Black" 
+                                                    BorderThickness="1.5"
+                                                    Background="{Binding FranchiseBrush}"   
+                                                    Effect="{StaticResource CardShadow}"
+                                                    MouseLeftButtonUp="MovieCard_Click">
+                                                <StackPanel>
+                                                    <!-- HEADER -->
+                                                    <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition/>
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
 
-                                                        <!-- Edit Button (only when not editing) -->
-                                                        <Button Grid.Column="0"  Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Edit"
+                                                        <StackPanel>
+                                                            <!-- DISPLAY MODE -->
+                                                            <StackPanel Orientation="Vertical" Margin="0,4,0,0"
+                                                                        Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
+
+                                                                <!-- Semi-transparent background for all text -->
+                                                                <Border Background="#40FFFFFF" CornerRadius="4" Padding="6" MaxWidth="260">
+                                                                    <StackPanel>
+                                                                        <!-- Title -->
+                                                                        <TextBlock Text="{Binding Title}"
+                                                                                   FontSize="16"
+                                                                                   FontWeight="Bold"
+                                                                                   Foreground="{Binding FranchiseBrush, Converter={StaticResource LightBackgroundToForegroundConverter}}"
+                                                                                   TextWrapping="Wrap"/>
+                                                                        <!-- Info line -->
+                                                                        <TextBlock Text="{Binding DisplayMeta}"
+                                                                                   FontSize="12"
+                                                                                   Foreground="{Binding FranchiseBrush, Converter={StaticResource LightBackgroundToForegroundConverter}}"
+                                                                                   TextWrapping="Wrap"/>
+                                                                        <Button Content="{Binding IsExpanded,
+                                                                                                  Converter={StaticResource BoolToTextConverter},
+                                                                                                  ConverterParameter='Show dates|Hide dates'}"
+                                                                                Margin="0,6,0,0"
+                                                                                Padding="8,2"
+                                                                                FontSize="11"
+                                                                                HorizontalAlignment="Left"
+                                                                                Command="{Binding DataContext.ToggleExpandCommand,
+                                                                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                                CommandParameter="{Binding}"/>
+                                                                    </StackPanel>
+                                                                </Border>
+
+                                                            </StackPanel>
+
+                                                            <!-- EDIT MODE -->
+                                                            <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                                <!-- Title -->
+                                                                <xctk:WatermarkTextBox Text="{Binding Title}"
+                                                                 Watermark="Title"
+                                                                 FontSize="15"
+                                                                 Padding="4"
+                                                                 Margin="0,0,0,6"
+                                                                 MaxWidth="200"/>
+
+                                                                <!-- Saga -->
+                                                                <xctk:WatermarkTextBox Text="{Binding Saga}"
+                                                                 Watermark="Saga"
+                                                                 Padding="4"
+                                                                 Margin="0,0,0,6"/>
+
+                                                                <!-- Year / Franchise / Franchise Number -->
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="60"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="50"/>
+                                                                    </Grid.ColumnDefinitions>
+
+                                                                    <xctk:WatermarkTextBox Grid.Column="0" Text="{Binding Year}" Watermark="Year" Margin="0,0,6,0"/>
+                                                                    <xctk:WatermarkTextBox Grid.Column="1"
+                                                                     Text="{Binding Franchise, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                                                     Watermark="Franchise" Margin="0,0,6,0"/>
+                                                                    <xctk:WatermarkTextBox Grid.Column="2"
+                                                                     Text="{Binding FranchiseNumber, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Watermark="#"/>
+                                                                </Grid>
+                                                                <xctk:ColorPicker
+                                                                            SelectedColor="{Binding FranchiseColor, Mode=TwoWay}"
+                                                                            Margin="0,6,0,6"
+                                                                            Width="120"/>
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </Grid>
+
+                                                    <!-- NOTE -->
+                                                    <Border Margin="0,10,0,0"
+                                                            Padding="10"
+                                                            Background="#DCDCDC"
+                                                            CornerRadius="8"
+                                                            Height="80"
+                                                            Visibility="{Binding DataContext.ShowComments,
+                                                                         RelativeSource={RelativeSource AncestorType=UserControl},
+                                                                         Converter={StaticResource BoolToVisibilityConverter}}">
+                                                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                            <Grid>
+                                                                <TextBlock Text="{Binding Note}"
+                                                                           TextWrapping="Wrap"
+                                                                           Foreground="#333"
+                                                                           Visibility="{Binding IsEditing,
+                                                                               Converter={StaticResource BoolToVisibilityConverter},
+                                                                               ConverterParameter=False}"/>
+
+                                                                <TextBox Text="{Binding Note}"
+                                                                         AcceptsReturn="True"
+                                                                         TextWrapping="Wrap"
+                                                                         VerticalScrollBarVisibility="Auto"
+                                                                         Visibility="{Binding IsEditing,
+                                                                             Converter={StaticResource BoolToVisibilityConverter},
+                                                                             ConverterParameter=True}"
+                                                                         Padding="6"/>
+                                                            </Grid>
+                                                        </ScrollViewer>
+                                                    </Border>
+
+                                                    <!-- WATCH DATES -->
+                                                    <StackPanel Margin="0,10,0,0">
+                                                        <StackPanel.Visibility>
+                                                            <MultiBinding Converter="{StaticResource ExpandWhileNotEditingConverter}">
+                                                                <Binding Path="IsExpanded"/>
+                                                                <Binding Path="IsEditing"/>
+                                                            </MultiBinding>
+                                                        </StackPanel.Visibility>
+                                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                            <TextBox Width="120" Text="{Binding DataContext.NewWatchDate, RelativeSource={RelativeSource AncestorType=UserControl}}" Height="28" Padding="4"/>
+                                                            <Button Content="Add" Margin="6,0,0,0"
+                                                            Command="{Binding DataContext.AddWatchDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}" Height="28" Padding="12,0" Background="#4CAF50" Foreground="White"/>
+                                                        </StackPanel>
+
+                                                        <ItemsControl ItemsSource="{Binding WatchDates}">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <WrapPanel/>
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Border Padding="6,2" Margin="0,0,6,6" Background="#E9ECEF" CornerRadius="6">
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <TextBlock Text="{Binding StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                                                            <Button Width="24" Height="24" FontFamily="Segoe MDL2 Assets" FontSize="12" Content=""
+                                                                            Margin="6,0,0,0"
+                                                                            Command="{Binding DataContext.RemoveWatchDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                                                                <Button.CommandParameter>
+                                                                                    <MultiBinding Converter="{StaticResource MovieDateTupleConverter}">
+                                                                                        <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="DataContext"/>
+                                                                                        <Binding/>
+                                                                                    </MultiBinding>
+                                                                                </Button.CommandParameter>
+                                                                            </Button>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                            <!-- END: Movie Card -->
+                                            <!-- ACTION BUTTONS -->
+                                            <StackPanel Orientation="Horizontal"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top"
+                                                        Margin="0,-14,4,0"
+                                                        Visibility="{Binding IsSidePanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <Border Background="{Binding FranchiseBrush}" 
+                                                        BorderBrush="Black"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Padding="4"
+                                                        Effect="{StaticResource IconShadow}">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Edit"
                                                                 Command="{Binding DataContext.EditMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
                                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"
-                                                                Background="#2196F3" Foreground="White" BorderThickness="0" Margin="0,0,4,0"
+                                                                Background="#2196F3" Foreground="White" BorderBrush="Black" BorderThickness="1.5" Margin="0,0,4,0"
                                                                 Effect="{StaticResource IconShadow}"/>
-
-                                                        <!-- Delete Button (only when not editing) -->
-                                                        <Button Grid.Column="1" Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Delete"
+                                                        <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Delete"
                                                                 Command="{Binding DataContext.RemoveMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
                                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"
-                                                                Background="#F44336" Foreground="White" BorderThickness="0" Margin="0,0,4,0"
+                                                                Background="#F44336" Foreground="White" BorderBrush="Black" BorderThickness="1.5" Margin="0,0,0,0"
                                                                 Effect="{StaticResource IconShadow}"/>
-
-                                                        <!-- Save Button (only when editing) -->
-                                                        <Button Grid.Column="2" Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Save"
+                                                        <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Save"
                                                                 Command="{Binding DataContext.SaveMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
                                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                                Background="#4CAF50" Foreground="White" BorderThickness="0" Margin="0,0,4,0"
+                                                                Background="#4CAF50" Foreground="White" BorderBrush="Black" BorderThickness="1.5" Margin="0,0,4,0"
                                                                 Effect="{StaticResource IconShadow}"/>
-
-                                                        <!-- Undo Button (only when editing) -->
-                                                        <Button Grid.Column="3" Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Undo"
+                                                        <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Undo"
                                                                 Command="{Binding DataContext.UndoMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
                                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                                Background="#FFC107" Foreground="White" BorderThickness="0"
+                                                                Background="#FFC107" Foreground="White" BorderBrush="Black" BorderThickness="1.5" Margin="0,0,0,0"
                                                                 Effect="{StaticResource IconShadow}"/>
-                                                    </Grid>
-
-                                                </Grid>
-
-                                                <!-- NOTE -->
-                                                <Border Margin="0,10,0,0"
-                                                        Padding="10"
-                                                        Background="#DCDCDC"
-                                                        CornerRadius="8"
-                                                        Height="80"
-                                                        Visibility="{Binding DataContext.ShowComments,
-                                                                     RelativeSource={RelativeSource AncestorType=UserControl},
-                                                                     Converter={StaticResource BoolToVisibilityConverter}}">
-                                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                                        <Grid>
-                                                            <TextBlock Text="{Binding Note}"
-                                                                       TextWrapping="Wrap"
-                                                                       Foreground="#333"
-                                                                       Visibility="{Binding IsEditing,
-                                                                           Converter={StaticResource BoolToVisibilityConverter},
-                                                                           ConverterParameter=False}"/>
-
-                                                            <TextBox Text="{Binding Note}"
-                                                                     AcceptsReturn="True"
-                                                                     TextWrapping="Wrap"
-                                                                     VerticalScrollBarVisibility="Auto"
-                                                                     Visibility="{Binding IsEditing,
-                                                                         Converter={StaticResource BoolToVisibilityConverter},
-                                                                         ConverterParameter=True}"
-                                                                     Padding="6"/>
-                                                        </Grid>
-                                                    </ScrollViewer>
-                                                </Border>
-
-                                                <!-- WATCH DATES -->
-                                                <StackPanel Margin="0,10,0,0">
-                                                    <StackPanel.Visibility>
-                                                        <MultiBinding Converter="{StaticResource ExpandWhileNotEditingConverter}">
-                                                            <Binding Path="IsExpanded"/>
-                                                            <Binding Path="IsEditing"/>
-                                                        </MultiBinding>
-                                                    </StackPanel.Visibility>
-                                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                                        <TextBox Width="120" Text="{Binding DataContext.NewWatchDate, RelativeSource={RelativeSource AncestorType=UserControl}}" Height="28" Padding="4"/>
-                                                        <Button Content="Add" Margin="6,0,0,0"
-                                                        Command="{Binding DataContext.AddWatchDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        CommandParameter="{Binding}" Height="28" Padding="12,0" Background="#4CAF50" Foreground="White"/>
                                                     </StackPanel>
-
-                                                    <ItemsControl ItemsSource="{Binding WatchDates}">
-                                                        <ItemsControl.ItemsPanel>
-                                                            <ItemsPanelTemplate>
-                                                                <WrapPanel/>
-                                                            </ItemsPanelTemplate>
-                                                        </ItemsControl.ItemsPanel>
-
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Border Padding="6,2" Margin="0,0,6,6" Background="#E9ECEF" CornerRadius="6">
-                                                                    <StackPanel Orientation="Horizontal">
-                                                                        <TextBlock Text="{Binding StringFormat='{}{0:dd/MM/yyyy}'}"/>
-                                                                        <Button Width="24" Height="24" FontFamily="Segoe MDL2 Assets" FontSize="12" Content=""
-                                                                        Margin="6,0,0,0"
-                                                                        Command="{Binding DataContext.RemoveWatchDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                                                                            <Button.CommandParameter>
-                                                                                <MultiBinding Converter="{StaticResource MovieDateTupleConverter}">
-                                                                                    <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="DataContext"/>
-                                                                                    <Binding/>
-                                                                                </MultiBinding>
-                                                                            </Button.CommandParameter>
-                                                                        </Button>
-                                                                    </StackPanel>
-                                                                </Border>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Border>
-                                        <!-- END: Movie Card -->
+                                                </Border>
+                                           </StackPanel>
+                                        </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>

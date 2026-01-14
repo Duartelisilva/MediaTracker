@@ -1,0 +1,6 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="BackgroundColor">#ECECEC</Color>
+    <Color x:Key="CardColor">#F5F5F5</Color>
+    <Color x:Key="TextColor">#333</Color>
+</ResourceDictionary>

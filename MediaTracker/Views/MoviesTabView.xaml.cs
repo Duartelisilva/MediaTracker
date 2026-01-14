@@ -3,6 +3,7 @@ using static MediaTracker.Domain.Movie;
 using System.Windows.Input;
 using MediaTracker.Domain;
 using MediaTracker.ViewModels;
+using System.Windows;
 
 namespace MediaTracker.Views;
 
@@ -34,6 +35,25 @@ public partial class MoviesTabView : UserControl
 
             // Toggle clicked movie
             movie.IsExpanded = !movie.IsExpanded;
+        }
+    }
+
+    private void MovieCard_Click(object sender, MouseButtonEventArgs e)
+    {
+        if (DataContext is MoviesTabViewModel viewModel)
+        {
+            if (sender is FrameworkElement fe && fe.DataContext is Movie movie)
+            {
+                bool newState = !movie.IsSidePanelOpen; // toggle
+                foreach (var saga in viewModel.SagaGroups)
+                {
+                    foreach (var m in saga.Movies)
+                    {
+                        m.IsSidePanelOpen = false; // close all
+                    }
+                }
+                movie.IsSidePanelOpen = newState; // open only clicked if toggled on
+            }
         }
     }
 }

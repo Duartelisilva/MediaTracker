@@ -80,6 +80,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
     public ICommand EditMovieCommand { get; }
     public ICommand SaveMovieCommand { get; }
     public ICommand ToggleExpandCommand { get; }
+    public ICommand ToggleSidePanelCommand { get; }
     public ICommand UndoMovieCommand { get; }
 
     private readonly IMediaRepository _repository;
@@ -98,14 +99,6 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         collectionView.GroupDescriptions.Add(new PropertyGroupDescription("Saga"));
         MoviesCollection.CollectionChanged += (_, __) => RefreshSagaGroups();
 
-        ToggleExpandCommand = new RelayCommand(obj =>
-        {
-            if (obj is Movie movie)
-            {
-                // Toggle the clicked movie
-                movie.IsExpanded = !movie.IsExpanded;
-            }
-        });
         // Load saved movies
         foreach (var movie in _repository.LoadMovies())
         {
@@ -243,6 +236,28 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
                 movie.FranchiseColor = movie.BackupFranchiseColor;
 
                 movie.IsEditing = false;
+            }
+        });
+
+        ToggleExpandCommand = new RelayCommand(obj =>
+        {
+            if (obj is Movie movie)
+            {
+                // Toggle the clicked movie
+                movie.IsExpanded = !movie.IsExpanded;
+            }
+        });
+
+        ToggleSidePanelCommand = new RelayCommand(obj =>
+        {
+            if (obj is Movie movie)
+            {
+                // Close other panels
+                foreach (var m in MoviesCollection)
+                    if (m != movie) m.IsSidePanelOpen = false;
+
+                // Toggle clicked panel
+                movie.IsSidePanelOpen = !movie.IsSidePanelOpen;
             }
         });
     }

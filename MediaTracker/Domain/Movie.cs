@@ -46,6 +46,13 @@ public class Movie : INotifyPropertyChanged
         }
     }
 
+    private bool _isSidePanelOpen;
+    public bool IsSidePanelOpen
+    {
+        get => _isSidePanelOpen;
+        set { _isSidePanelOpen = value; OnPropertyChanged(); }
+    }
+
     public string Title
     {
         get => _title;
