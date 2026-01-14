@@ -2,9 +2,10 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 
 namespace MediaTracker.ViewModels; 
-public sealed class MainViewModel 
+public sealed class MainViewModel : INotifyPropertyChanged
 { 
     public ObservableCollection<TabViewModel> Tabs { get; } = new();
 
@@ -22,8 +23,13 @@ public sealed class MainViewModel
         }
     }
 
+    public ICommand ToggleDarkModeCommand { get; }
     public MainViewModel()
-    { 
+    {
+        ToggleDarkModeCommand = new RelayCommand(_ =>
+        {
+            IsDarkMode = !IsDarkMode;
+        });
         // Add the two tabs
         Tabs.Add(new MoviesTabViewModel());
         Tabs.Add(new SeriesTabViewModel()); 
@@ -42,17 +48,25 @@ public sealed class MainViewModel
 
     public void ApplyTheme()
     {
-        var dict = new ResourceDictionary
+        var appResources = Application.Current.Resources.MergedDictionaries;
+
+        var existingTheme = appResources
+            .FirstOrDefault(d => d.Source != null &&
+                (d.Source.OriginalString.Contains("DarkTheme") ||
+                 d.Source.OriginalString.Contains("LightTheme")));
+
+        if (existingTheme != null)
+            appResources.Remove(existingTheme);
+
+        appResources.Add(new ResourceDictionary
         {
             Source = new Uri(
-                IsDarkMode ? "Themes/DarkTheme.xaml"
-                           : "Themes/LightTheme.xaml",
+                IsDarkMode ? "Themes/Dark.xaml"
+                           : "Themes/Light.xaml",
                 UriKind.Relative)
-        };
-
-        Application.Current.Resources.MergedDictionaries.Clear();
-        Application.Current.Resources.MergedDictionaries.Add(dict);
+        });
     }
+
 
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged([CallerMemberName] string? name = null)
