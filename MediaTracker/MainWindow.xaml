@@ -4,7 +4,9 @@
         xmlns:views="clr-namespace:MediaTracker.Views"
         xmlns:vm="clr-namespace:MediaTracker.ViewModels"
         xmlns:converters="clr-namespace:MediaTracker.Converters"
-        Title="Media Tracker" Height="500" Width="800">
+        Title="Media Tracker" Height="500" Width="800"
+        Background="{DynamicResource BackgroundBrush}"
+        Foreground="{DynamicResource TextBrush}">
 
     <Window.DataContext>
         <vm:MainViewModel/>
@@ -16,28 +18,106 @@
 
     <DockPanel LastChildFill="True">
         <!-- Top bar -->
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="8">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="8" Background="{DynamicResource BackgroundBrush}">
             <Button Command="{Binding ToggleDarkModeCommand}"
-                    Content="{Binding IsDarkMode, Converter={StaticResource BoolToSunMoonConverter}}"
-                    FontSize="18" Padding="6" ToolTip="Toggle dark/light mode"/>
+                Content="{Binding IsDarkMode, Converter={StaticResource BoolToSunMoonConverter}}"
+                FontSize="18"
+                Padding="6"
+                ToolTip="Toggle dark/light mode">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                            Background="{DynamicResource CardBrush}"
+                            BorderBrush="{DynamicResource DarkModeButtonBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="cp"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  ContentSource="Content"
+                                  Margin="{TemplateBinding Padding}"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <!-- Hover -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource TabHoverBrush}"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TabHoverBrush}"/>
+                            </Trigger>
+
+                            <!-- Pressed -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource TabSelectedBrush}"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TabSelectedBrush}"/>
+                            </Trigger>
+
+                            <!-- Dark mode text color -->
+                            <DataTrigger Binding="{Binding IsDarkMode}" Value="True">
+                                <Setter TargetName="cp" Property="TextElement.Foreground" Value="White"/>
+                            </DataTrigger>
+
+                            <!-- Light mode text color -->
+                            <DataTrigger Binding="{Binding IsDarkMode}" Value="False">
+                                <Setter TargetName="cp" Property="TextElement.Foreground" Value="Black"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </StackPanel>
 
         <!-- Main content -->
         <TabControl ItemsSource="{Binding Tabs}"
-            Background="{DynamicResource BackgroundBrush}">
+                    Background="{DynamicResource BackgroundBrush}"
+                    Foreground="{DynamicResource TextBrush}">
 
-            <!-- Tab headers -->
+            <TabControl.ItemContainerStyle>
+                <Style TargetType="TabItem">
+                    <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                    <Setter Property="Padding" Value="16,12"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border x:Name="Bd"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{DynamicResource TabBorderBrush}"
+                                    BorderThickness="1"
+                                    SnapsToDevicePixels="True">
+                                    <ContentPresenter ContentSource="Header"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource TabHoverBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource TabSelectedBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.ItemContainerStyle>
+
+
+
+            <!-- Tab headers template -->
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Background="{DynamicResource CardBrush}" Padding="8">
-                        <TextBlock Text="{Binding Header}"
-                           FontWeight="Bold"
-                           Foreground="{DynamicResource TextBrush}"/>
-                    </Border>
+                    <TextBlock Text="{Binding Header}" 
+                       FontWeight="Bold" 
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
                 </DataTemplate>
             </TabControl.ItemTemplate>
 
-            <!-- Tab content -->
+        <!-- Tab content -->
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <ContentControl Content="{Binding}"/>

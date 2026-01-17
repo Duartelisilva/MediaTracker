@@ -1,14 +1,26 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Colors -->
+    <!-- Light Mode Colors -->
     <Color x:Key="BackgroundColor">#ECECEC</Color>
+    <!-- window background -->
     <Color x:Key="CardColor">#F5F5F5</Color>
+    <!-- tab / card background -->
     <Color x:Key="TextColor">#333333</Color>
+    <!-- text color -->
 
     <!-- Brushes -->
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
     <SolidColorBrush x:Key="CardBrush" Color="{StaticResource CardColor}"/>
     <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}"/>
+
+    <!-- TabItem specific brushes -->
+    <SolidColorBrush x:Key="TabHoverBrush" Color="#E0E0E0"/>
+    <!-- slightly darker than CardBrush on hover -->
+    <SolidColorBrush x:Key="TabSelectedBrush" Color="#D6D6D6"/>
+    <!-- selected tab, subtle highlight -->
+    <SolidColorBrush x:Key="TabBorderBrush" Color="#888888"/>
+    <!-- gray border for contrast -->
+    <SolidColorBrush x:Key="DarkModeButtonBorderBrush" Color="Black"/>
 
 </ResourceDictionary>
