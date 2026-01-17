@@ -106,7 +106,7 @@
                                     Visibility="{Binding IsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <WrapPanel Orientation="Horizontal" ItemWidth="300" ItemHeight="Auto"/>
+                                        <UniformGrid Columns="4" />
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
 
@@ -114,7 +114,7 @@
                                     <DataTemplate>
                                         <Grid>
                                             <!-- BEGIN: Movie Card -->
-                                            <Border Width="280"
+                                            <Border Width="340"
                                                     Margin="0,0,16,16"
                                                     Padding="12"
                                                     CornerRadius="12"
@@ -133,7 +133,7 @@
 
                                                         <StackPanel>
                                                             <!-- DISPLAY MODE -->
-                                                            <StackPanel Orientation="Vertical" Margin="0,4,0,0"
+                                                            <StackPanel Orientation="Vertical" Margin="0,1,0,0"
                                                                         Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
 
                                                                 <!-- Semi-transparent background for all text -->
@@ -142,7 +142,7 @@
                                                                         <!-- Title -->
                                                                         <TextBlock Text="{Binding Title}"
                                                                                    FontSize="16"
-                                                                                   FontWeight="Bold"
+                                                                                   FontWeight="SemiBold"
                                                                                    Foreground="{Binding FranchiseBrush, Converter={StaticResource LightBackgroundToForegroundConverter}}"
                                                                                    TextWrapping="Wrap"/>
                                                                         <!-- Info line -->
@@ -150,16 +150,6 @@
                                                                                    FontSize="12"
                                                                                    Foreground="{Binding FranchiseBrush, Converter={StaticResource LightBackgroundToForegroundConverter}}"
                                                                                    TextWrapping="Wrap"/>
-                                                                        <Button Content="{Binding IsExpanded,
-                                                                                                  Converter={StaticResource BoolToTextConverter},
-                                                                                                  ConverterParameter='Show dates|Hide dates'}"
-                                                                                Margin="0,6,0,0"
-                                                                                Padding="8,2"
-                                                                                FontSize="11"
-                                                                                HorizontalAlignment="Left"
-                                                                                Command="{Binding DataContext.ToggleExpandCommand,
-                                                                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                                                CommandParameter="{Binding}"/>
                                                                     </StackPanel>
                                                                 </Border>
 
@@ -293,6 +283,22 @@
                                                         Padding="4"
                                                         Effect="{StaticResource IconShadow}">
                                                     <StackPanel Orientation="Horizontal">
+                                                        <Button Width="28" Height="28"
+                                                                FontFamily="Segoe MDL2 Assets"
+                                                                FontSize="14"
+                                                                ToolTip="Show/Hide Dates"
+                                                                Background="#607D8B"
+                                                                Foreground="White"
+                                                                BorderBrush="Black"
+                                                                BorderThickness="1.5"
+                                                                Margin="0,0,4,0"
+                                                                Effect="{StaticResource IconShadow}"
+                                                                Command="{Binding DataContext.ToggleExpandCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
+                                                            <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Button>
+
                                                         <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Edit"
                                                                 Command="{Binding DataContext.EditMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
