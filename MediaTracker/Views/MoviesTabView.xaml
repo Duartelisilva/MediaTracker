@@ -19,6 +19,7 @@
         <converters:ExpandWhileNotEditingConverter x:Key="ExpandWhileNotEditingConverter"/>
         <converters:BoolToTextConverter x:Key="BoolToTextConverter"/>
         <converters:LightBackgroundToForegroundConverter x:Key="LightBackgroundToForegroundConverter"/>
+        <converters:WidthDividerConverter x:Key="WidthDividerConverter"/>
 
         <!-- Shadow effect for modern cards -->
         <DropShadowEffect x:Key="CardShadow" Color="#333" Opacity="0.1" BlurRadius="12"/>
@@ -106,15 +107,28 @@
                                     Visibility="{Binding IsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <UniformGrid Columns="4" />
+                                        <WrapPanel />
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
+
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="FrameworkElement.Width"
+                                                Value="{Binding RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}, 
+                                                        Path=ActualWidth, 
+                                                        Converter={StaticResource WidthDividerConverter}, 
+                                                        ConverterParameter=4}"/>
+                                        <Setter Property="FrameworkElement.Margin" Value="8"/>
+                                        <Setter Property="FrameworkElement.MinWidth" Value="200"/>
+                                        <Setter Property="FrameworkElement.MaxWidth" Value="340"/>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
 
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
                                             <!-- BEGIN: Movie Card -->
-                                            <Border Width="340"
+                                            <Border 
                                                     Margin="0,0,16,16"
                                                     Padding="12"
                                                     CornerRadius="12"
