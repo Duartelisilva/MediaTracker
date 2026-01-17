@@ -7,7 +7,7 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="700"
-             Background="#ECECEC">
+             Background="{DynamicResource BackgroundBrush}">
 
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
@@ -36,32 +36,33 @@
         </Grid.RowDefinitions>
 
         <!-- ADD MOVIE CARD -->
-        <Border Grid.Row="0" Padding="16" Margin="0,0,0,24" CornerRadius="12" Background="#F5F5F5" Effect="{StaticResource CardShadow}">
+        <Border Grid.Row="0" Padding="16" Margin="0,0,0,24" CornerRadius="12" Background="{DynamicResource CardBrush}"
+                BorderBrush="{DynamicResource TabBorderBrush}" Effect="{StaticResource CardShadow}">
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <!-- Title -->
                     <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Title:" FontSize="12" Foreground="#555"/>
+                        <TextBlock Text="Title:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
                         <xctk:WatermarkTextBox Width="180" Height="36" Padding="4" Text="{Binding NewTitle}" Watermark="Title"/>
                     </StackPanel>
                     <!-- Year -->
                     <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Year:" FontSize="12" Foreground="#555"/>
+                        <TextBlock Text="Year:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
                         <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYear}" Watermark="Year"/>
                     </StackPanel>
                     <!-- Saga -->
                     <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Saga:" FontSize="12" Foreground="#555"/>
+                        <TextBlock Text="Saga:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
                         <xctk:WatermarkTextBox Width="120" Height="36" Padding="4" Text="{Binding NewSaga}" Watermark="Saga"/>
                     </StackPanel>
                     <!-- Franchise -->
                     <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Franchise:" FontSize="12" Foreground="#555"/>
+                        <TextBlock Text="Franchise:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
                         <xctk:WatermarkTextBox Width="120" Height="36" Padding="4" Text="{Binding NewFranchise}" Watermark="Franchise"/>
                     </StackPanel>
                     <!-- Franchise Number -->
                     <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Franchise #:" Height="16" FontSize="12" Foreground="#555"/>
+                        <TextBlock Text="Franchise #:" Height="16" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
                         <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewFranchiseNumber}" Watermark="#" />
                     </StackPanel>
                     <!-- Add Button -->
@@ -87,7 +88,7 @@
 
 
         <!-- MOVIE LIST -->
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" Background="{DynamicResource BackgroundBrush}">
             <ItemsControl ItemsSource="{Binding SagaGroups}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -117,7 +118,7 @@
                                                     Margin="0,0,16,16"
                                                     Padding="12"
                                                     CornerRadius="12"
-                                                    BorderBrush="Black" 
+                                                    BorderBrush="{DynamicResource TabBorderBrush}" 
                                                     BorderThickness="1.5"
                                                     Background="{Binding FranchiseBrush}"   
                                                     Effect="{StaticResource CardShadow}"
