@@ -120,7 +120,7 @@
                                                     CornerRadius="12"
                                                     BorderBrush="{DynamicResource TabBorderBrush}" 
                                                     BorderThickness="1.5"
-                                                    Background="{Binding FranchiseBrush}"   
+                                                    Background="{Binding FranchiseBrushForMode}"   
                                                     Effect="{StaticResource CardShadow}"
                                                     MouseLeftButtonUp="MovieCard_Click">
                                                 <StackPanel>

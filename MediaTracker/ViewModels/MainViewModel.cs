@@ -20,6 +20,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
             OnPropertyChanged();
             ApplyTheme();
             SaveThemePreference();
+
+            foreach (var moviesTab in Tabs.OfType<MoviesTabViewModel>())
+                moviesTab.UpdateMoviesDarkMode(_isDarkMode);
         }
     }
 

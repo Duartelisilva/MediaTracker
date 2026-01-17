@@ -528,4 +528,10 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
             SagaGroups.Add(group);
         }
     }
+    public void UpdateMoviesDarkMode(bool isDark)
+    {
+        foreach (var saga in SagaGroups)
+            foreach (var movie in saga.Movies)
+                movie.SetDarkMode(isDark);
+    }
 }

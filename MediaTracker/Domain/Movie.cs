@@ -14,6 +14,7 @@ public class Movie : INotifyPropertyChanged
     private string? _franchise;
     private int? _franchiseNumber;
     private Color _franchiseColor = Colors.Transparent;
+    private Color _franchiseDarkColor = Colors.Transparent;
 
     private string? _saga;
     public string? Saga
@@ -87,6 +88,7 @@ public class Movie : INotifyPropertyChanged
         set
         {
             _franchiseColor = value;
+            _franchiseDarkColor = DarkenColor(value, 0.4); // darken 40% for dark mode
             OnPropertyChanged();
             OnPropertyChanged(nameof(FranchiseBrush));
         }
@@ -111,6 +113,11 @@ public class Movie : INotifyPropertyChanged
     [JsonIgnore] public string? BackupNote { get; set; }
     
     [JsonIgnore] public Action? ClearNewWatchDate;
+
+    [JsonIgnore] private bool _currentDarkMode;
+
+    [JsonIgnore] public SolidColorBrush FranchiseBrushForMode =>
+    new SolidColorBrush(_currentDarkMode ? _franchiseDarkColor : _franchiseColor);
 
     [JsonIgnore] public System.Windows.Media.Color BackupFranchiseColor { get; set; }
     [JsonIgnore]
@@ -227,5 +234,19 @@ public class Movie : INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+    private static Color DarkenColor(Color color, double factor)
+    {
+        return Color.FromRgb(
+            (byte)(color.R * (1 - factor)),
+            (byte)(color.G * (1 - factor)),
+            (byte)(color.B * (1 - factor))
+        );
+    }
+    public void RefreshBrush() => OnPropertyChanged(nameof(FranchiseBrushForMode));
+    public void SetDarkMode(bool isDark)
+    {
+        _currentDarkMode = isDark;
+        OnPropertyChanged(nameof(FranchiseBrushForMode));
     }
 }
