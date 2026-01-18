@@ -130,6 +130,7 @@
                                             <!-- BEGIN: Movie Card -->
                                             <Border 
                                                     Margin="0,0,16,16"
+                                                    VerticalAlignment="Top"
                                                     Padding="12"
                                                     CornerRadius="12"
                                                     BorderBrush="{DynamicResource TabBorderBrush}" 
@@ -264,7 +265,7 @@
                                                                 <DataTemplate>
                                                                     <Border Padding="6,2" Margin="0,0,6,6" Background="#E9ECEF" CornerRadius="6">
                                                                         <StackPanel Orientation="Horizontal">
-                                                                            <TextBlock Text="{Binding StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                                                            <TextBlock Text="{Binding StringFormat='{}{0:dd/MM/yyyy}'}" Foreground="Black" VerticalAlignment="Center"/>
                                                                             <Button Width="24" Height="24" FontFamily="Segoe MDL2 Assets" FontSize="12" Content=""
                                                                             Margin="6,0,0,0"
                                                                             Command="{Binding DataContext.RemoveWatchDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">

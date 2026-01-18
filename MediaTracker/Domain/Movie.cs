@@ -203,22 +203,22 @@ public class Movie : INotifyPropertyChanged
         {
             var parts = new List<string>();
 
-            parts.Add(Year.ToString());
+            if (Year > 0)
+                parts.Add(Year.ToString());
 
             if (!string.IsNullOrWhiteSpace(Franchise))
-            {
-                var f = Franchise;
-                if (FranchiseNumber.HasValue)
-                    f += " " + FranchiseNumber.Value;
-                parts.Add(f);
-            }
+                parts.Add(Franchise);
+
+            if (FranchiseNumber.HasValue)
+                parts.Add(FranchiseNumber.Value.ToString());
+
 
             if (LastWatchedDate.HasValue)
                 parts.Add(LastWatchedDate.Value.ToString("dd/MM/yyyy"));
-
             return string.Join(" • ", parts);
         }
     }
+
     public class SagaGroup : INotifyPropertyChanged
     {
         public string Name { get; set; } = "Undefined";

@@ -103,6 +103,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
         foreach (var movie in _repository.LoadMovies())
         {
             movie.IsExpanded = false;
+            movie.IsSidePanelOpen = false;
             MoviesCollection.Add(movie);
 
         }
@@ -241,10 +242,17 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
 
         ToggleExpandCommand = new RelayCommand(obj =>
         {
-            if (obj is Movie movie)
+            if (obj is Movie clickedMovie)
             {
+                // Close all other movies
+                foreach (var movie in MoviesCollection)
+                {
+                    if (movie != clickedMovie)
+                        movie.IsExpanded = false;
+                }
+
                 // Toggle the clicked movie
-                movie.IsExpanded = !movie.IsExpanded;
+                clickedMovie.IsExpanded = !clickedMovie.IsExpanded;
             }
         });
 
