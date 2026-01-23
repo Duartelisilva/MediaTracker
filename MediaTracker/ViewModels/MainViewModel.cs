@@ -4,9 +4,9 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
-namespace MediaTracker.ViewModels; 
+namespace MediaTracker.ViewModels;
 public sealed class MainViewModel : INotifyPropertyChanged
-{ 
+{
     public ObservableCollection<TabViewModel> Tabs { get; } = new();
 
     private bool _isDarkMode;
@@ -35,7 +35,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         });
         // Add the two tabs
         Tabs.Add(new MoviesTabViewModel());
-        Tabs.Add(new SeriesTabViewModel()); 
+        Tabs.Add(new SeriesTabViewModel());
     }
 
     public void LoadThemePreference()

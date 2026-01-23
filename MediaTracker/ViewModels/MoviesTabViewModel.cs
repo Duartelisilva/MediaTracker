@@ -135,7 +135,7 @@ public sealed class MoviesTabViewModel : TabViewModel, INotifyPropertyChanged
 
                 if (result != MessageBoxResult.Yes)
                     return;
-            
+
                 RemoveMovie(movie);
             }
 

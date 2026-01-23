@@ -27,9 +27,9 @@
         <!-- Shadow effect for Edit/Delete/Undo/Save buttons -->
         <DropShadowEffect x:Key="IconShadow" Color="Black" BlurRadius="4" ShadowDepth="0" Opacity="0.45"/>
     </UserControl.Resources>
-    
 
-    
+
+
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -71,8 +71,8 @@
                         <TextBlock Height="16"/>
                         <Button Content="Add" Height="36" Padding="20,6" Background="#4CAF50" Foreground="White" Command="{Binding AddMovieCommand}"/>
                     </StackPanel>
-                    
-                        <!-- Comments Button -->
+
+                    <!-- Comments Button -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Height="16"/>
                         <ToggleButton Content="Comments"
@@ -201,10 +201,10 @@
                                                                     <xctk:WatermarkTextBox Grid.Column="2"
                                                                      Text="{Binding FranchiseNumber, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Watermark="#"/>
                                                                 </Grid>
-                                                                <xctk:ColorPicker
-                                                                            SelectedColor="{Binding FranchiseColor, Mode=TwoWay}"
-                                                                            Margin="0,6,0,6"
-                                                                            Width="120"/>
+                                                                    <xctk:ColorPicker
+                                                                        SelectedColor="{Binding FranchiseColor, Mode=TwoWay}"
+                                                                        Margin="0,6,0,6"
+                                                                        Width="120"/>
                                                             </StackPanel>
                                                         </StackPanel>
                                                     </Grid>
@@ -340,7 +340,7 @@
                                                                 Effect="{StaticResource IconShadow}"/>
                                                     </StackPanel>
                                                 </Border>
-                                           </StackPanel>
+                                            </StackPanel>
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

@@ -91,6 +91,7 @@ public class Movie : INotifyPropertyChanged
             _franchiseDarkColor = DarkenColor(value, 0.4); // darken 40% for dark mode
             OnPropertyChanged();
             OnPropertyChanged(nameof(FranchiseBrush));
+            OnPropertyChanged(nameof(FranchiseBrushForMode));
         }
     }
 
@@ -111,12 +112,13 @@ public class Movie : INotifyPropertyChanged
     [JsonIgnore] public string? BackupFranchise { get; set; }
     [JsonIgnore] public int? BackupFranchiseNumber { get; set; }
     [JsonIgnore] public string? BackupNote { get; set; }
-    
+
     [JsonIgnore] public Action? ClearNewWatchDate;
 
     [JsonIgnore] private bool _currentDarkMode;
 
-    [JsonIgnore] public SolidColorBrush FranchiseBrushForMode =>
+    [JsonIgnore]
+    public SolidColorBrush FranchiseBrushForMode =>
     new SolidColorBrush(_currentDarkMode ? _franchiseDarkColor : _franchiseColor);
 
     [JsonIgnore] public System.Windows.Media.Color BackupFranchiseColor { get; set; }
