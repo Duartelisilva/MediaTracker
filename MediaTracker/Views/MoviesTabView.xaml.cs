@@ -15,7 +15,7 @@ public partial class MoviesTabView : UserControl
     }
     private void SagaHeader_Click(object sender, MouseButtonEventArgs e)
     {
-        if (sender is StackPanel sp && sp.DataContext is Movie.SagaGroup group)
+        if (sender is StackPanel sp && sp.DataContext is Media.SagaGroup<Movie> group)
         {
             group.IsCollapsed = !group.IsCollapsed;
         }
@@ -30,7 +30,7 @@ public partial class MoviesTabView : UserControl
         if (sender is Border border && border.DataContext is Movie movie)
         {
             // Collapse other movies
-            foreach (var m in ((MoviesTabViewModel)DataContext).MoviesCollection)
+            foreach (var m in ((MoviesTabViewModel)DataContext).MediaCollection)
                 if (m != movie) m.IsExpanded = false;
 
             // Toggle clicked movie
@@ -47,7 +47,7 @@ public partial class MoviesTabView : UserControl
                 bool newState = !movie.IsSidePanelOpen; // toggle
                 foreach (var saga in viewModel.SagaGroups)
                 {
-                    foreach (var m in saga.Movies)
+                    foreach (var m in saga.Items)
                     {
                         m.IsSidePanelOpen = false; // close all
                     }

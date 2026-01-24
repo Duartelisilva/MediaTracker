@@ -103,7 +103,7 @@
                             </StackPanel>
 
                             <!-- Movies under this Saga -->
-                            <ItemsControl ItemsSource="{Binding Movies}" 
+                            <ItemsControl ItemsSource="{Binding Items}" 
                                     Visibility="{Binding IsCollapsed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -135,7 +135,7 @@
                                                     CornerRadius="12"
                                                     BorderBrush="{DynamicResource TabBorderBrush}" 
                                                     BorderThickness="1.5"
-                                                    Background="{Binding FranchiseBrushForMode}"   
+                                                    Background="{Binding BrushForDarkMode}"   
                                                     Effect="{StaticResource CardShadow}"
                                                     MouseLeftButtonUp="MovieCard_Click">
                                                 <StackPanel>
@@ -158,12 +158,12 @@
                                                                         <TextBlock Text="{Binding Title}"
                                                                                    FontSize="16"
                                                                                    FontWeight="SemiBold"
-                                                                                   Foreground="{Binding FranchiseBrush, Converter={StaticResource LightBackgroundToForegroundConverter}}"
+                                                                                   Foreground="{Binding Brush, Converter={StaticResource LightBackgroundToForegroundConverter}}"
                                                                                    TextWrapping="Wrap"/>
                                                                         <!-- Info line -->
                                                                         <TextBlock Text="{Binding DisplayMeta}"
                                                                                    FontSize="12"
-                                                                                   Foreground="{Binding FranchiseBrush, Converter={StaticResource LightBackgroundToForegroundConverter}}"
+                                                                                   Foreground="{Binding Brush, Converter={StaticResource LightBackgroundToForegroundConverter}}"
                                                                                    TextWrapping="Wrap"/>
                                                                     </StackPanel>
                                                                 </Border>
@@ -202,7 +202,7 @@
                                                                      Text="{Binding FranchiseNumber, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Watermark="#"/>
                                                                 </Grid>
                                                                     <xctk:ColorPicker
-                                                                        SelectedColor="{Binding FranchiseColor, Mode=TwoWay}"
+                                                                        SelectedColor="{Binding BaseColor, Mode=TwoWay}"
                                                                         Margin="0,6,0,6"
                                                                         Width="120"/>
                                                             </StackPanel>
@@ -291,7 +291,7 @@
                                                         VerticalAlignment="Top"
                                                         Margin="0,-14,4,0"
                                                         Visibility="{Binding IsSidePanelOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                <Border Background="{Binding FranchiseBrush}" 
+                                                <Border Background="{Binding Brush}" 
                                                         BorderBrush="Black"
                                                         BorderThickness="1"
                                                         CornerRadius="6"
