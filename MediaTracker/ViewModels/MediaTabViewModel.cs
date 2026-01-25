@@ -20,6 +20,7 @@ namespace MediaTracker.ViewModels
         private string? _newSaga;
         private string? _newWatchDate; 
         private bool _showComments;
+        public bool IsDarkMode { get; private set; }
         private Color _newBaseColor = Colors.LightGray;
         public int NewYear { get; set; } = DateTime.Now.Year;
         // Parameters
@@ -83,6 +84,7 @@ namespace MediaTracker.ViewModels
 
         public void UpdateMoviesDarkMode(bool isDark)
         {
+            IsDarkMode = isDark;
             foreach (var saga in SagaGroups)
                 foreach (var item in saga.Items)
                     item.SetDarkMode(isDark);

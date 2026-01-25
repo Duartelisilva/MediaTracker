@@ -152,7 +152,7 @@
                                                                         Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
 
                                                                 <!-- Semi-transparent background for all text -->
-                                                                <Border Background="#40FFFFFF" CornerRadius="4" Padding="6" MaxWidth="260">
+                                                                <Border Background="#40FFFFFF" CornerRadius="4" Padding="6" MaxWidth="300">
                                                                     <StackPanel>
                                                                         <!-- Title -->
                                                                         <TextBlock Text="{Binding Title}"
@@ -167,7 +167,6 @@
                                                                                    TextWrapping="Wrap"/>
                                                                     </StackPanel>
                                                                 </Border>
-
                                                             </StackPanel>
 
                                                             <!-- EDIT MODE -->
@@ -178,7 +177,7 @@
                                                                  FontSize="15"
                                                                  Padding="4"
                                                                  Margin="0,0,0,6"
-                                                                 MaxWidth="200"/>
+                                                                 MaxWidth="300"/>
 
                                                                 <!-- Saga -->
                                                                 <xctk:WatermarkTextBox Text="{Binding Saga}"

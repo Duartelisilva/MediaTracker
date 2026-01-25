@@ -291,7 +291,7 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
             if (existing != null)
                 movie.BaseColor = existing.BaseColor; // inherit color from existing franchise
         }
-
+        movie.SetDarkMode(IsDarkMode);
         MediaCollection.Add(movie);
 
         // Sort movies: group by franchise, then by franchise number
