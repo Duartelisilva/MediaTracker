@@ -7,35 +7,20 @@ using System.Collections.ObjectModel;
 
 namespace MediaTracker.Services
 {
-    public class JsonMediaRepository : IMediaRepository
+    public class JsonMediaRepository<T> : IMediaRepository<T>
     {
-        private readonly string _filePath = "movies.json";
+        private readonly string _filePath = typeof(T).Name.ToLower() + "s.json";
 
-        public IEnumerable<Movie> LoadMovies()
+        public IEnumerable<T> Load()
         {
-            if (!File.Exists(_filePath))
-                return new List<Movie>();
-
-            string json = File.ReadAllText(_filePath); // <--- define json here
-            var movies = JsonSerializer.Deserialize<List<Movie>>(json) ?? new List<Movie>();
-
-            // Convert WatchDates to ObservableCollection
-            foreach (var movie in movies)
-            {
-                movie.WatchDates = movie.WatchDates != null
-                    ? new ObservableCollection<DateTime>(movie.WatchDates)
-                    : new ObservableCollection<DateTime>();
-            }
-
-            return movies;
+            if (!File.Exists(_filePath)) return new List<T>();
+            var json = File.ReadAllText(_filePath);
+            return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
         }
 
-        public void SaveMovies(IEnumerable<Movie> movies)
+        public void Save(IEnumerable<T> items)
         {
-            var json = JsonSerializer.Serialize(movies, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            var json = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(_filePath, json);
         }
     }

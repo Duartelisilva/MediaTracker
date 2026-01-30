@@ -376,7 +376,6 @@
                                                 <TextBlock Text="★" FontSize="24" Foreground="Black" Margin="-2.3,-5,0,0"/>
                                                 <TextBlock Text="★" FontSize="18" Foreground="Gold"/>
                                             </Grid>
-
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

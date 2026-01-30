@@ -34,9 +34,6 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
 
 
     // Commands
-
-    public ICommand AddWatchDateCommand { get; }
-    public ICommand RemoveWatchDateCommand { get; }
     public ICommand AddMovieCommand { get; }
     public ICommand RemoveMovieCommand { get; }
     public ICommand EditMovieCommand { get; }
@@ -45,7 +42,7 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
     public ICommand ToggleSidePanelCommand { get; }
     public ICommand UndoMovieCommand { get; }
 
-    private readonly IMediaRepository _repository;
+    private readonly IMediaRepository<Movie> _repository;
 
 
     public MoviesTabViewModel()
@@ -54,7 +51,7 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
         NewFranchise = "";
         NewWatchDate = "";
 
-        _repository = new JsonMediaRepository();
+        _repository = new JsonMediaRepository<Movie>();
 
         var collectionView = CollectionViewSource.GetDefaultView(MediaCollection);
         collectionView.GroupDescriptions.Clear();
@@ -62,12 +59,11 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
         MediaCollection.CollectionChanged += (_, __) => RefreshSagaGroups();
 
         // Load saved movies
-        foreach (var movie in _repository.LoadMovies())
+        foreach (var movie in _repository.Load())
         {
             movie.IsExpanded = false;
             movie.IsSidePanelOpen = false;
             MediaCollection.Add(movie);
-
         }
         RefreshSagaGroups();
 
@@ -76,13 +72,6 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
         {
             movie.ClearNewWatchDate = () => NewWatchDate = "";
         }
-
-        AddWatchDateCommand = new RelayCommand(obj => AddWatchDate((Movie)obj!));
-        RemoveWatchDateCommand = new RelayCommand(obj =>
-        {
-            var tuple = (Tuple<Movie, DateTime>)obj!;
-            RemoveWatchDate(tuple);
-        });
 
         AddMovieCommand = new RelayCommand(_ => AddMovie());
 
@@ -319,77 +308,9 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
         NewWatchDate = "";
     }
 
-    private void AddWatchDate(Movie movie)
-    {
-        if (movie == null)
-            return;
-
-        string input = NewWatchDate?.Trim() ?? "";
-
-        if (!DateTime.TryParseExact(
-                input,
-                "dd/MM/yyyy",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None,
-                out var date))
-        {
-            MessageBox.Show(
-                "Invalid date format.\nUse: dd/MM/yyyy (example: 21/08/2024)",
-                "Invalid date");
-            return;
-        }
-
-        // Year validation
-        if (date.Year < 1900 || date.Year > 2099)
-        {
-            MessageBox.Show(
-                "Year must be between 1900 and 2099.",
-                "Invalid year");
-            return;
-        }
-
-        if (!movie.WatchDates.Contains(date))
-            movie.WatchDates.Add(date);
-
-        // Sort dates descending
-        var sorted = movie.WatchDates.OrderByDescending(d => d).ToList();
-        movie.WatchDates.Clear();
-        foreach (var d in sorted)
-            movie.WatchDates.Add(d);
-
-        // Refresh computed properties
-
-        movie.OnPropertyChanged(nameof(movie.LastWatchedDate));
-        movie.OnPropertyChanged(nameof(movie.Seen));
-        movie.OnPropertyChanged(nameof(movie.DisplayMeta));
-
-        NewWatchDate = "";
-        OnPropertyChanged(nameof(NewWatchDate));
-        SaveMovies();
-    }
-
-    private void RemoveWatchDate(Tuple<Movie, DateTime> param)
-    {
-        var movie = param.Item1;
-        var date = param.Item2;
-        var result = MessageBox.Show(
-            $"Are you sure you want to delete the watch date {date:dd/MM/yyyy} for '{movie.Title}'?",
-            "Confirm Delete",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Warning);
-        if (result != MessageBoxResult.Yes)
-            return; // user canceled
-
-        movie?.WatchDates.Remove(date);
-
-        movie?.OnPropertyChanged(nameof(movie.LastWatchedDate));
-        movie?.OnPropertyChanged(nameof(movie.Seen));
-        movie?.OnPropertyChanged(nameof(movie.DisplayMeta));
-        SaveMovies();
-    }
     private void SaveMovies()
     {
-        _repository.SaveMovies(MediaCollection);
+        _repository.Save(MediaCollection);
     }
 
     private void RemoveMovie(Movie movie)
@@ -475,5 +396,10 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
         SagaGroups.Clear();
         foreach (var group in groups)
             SagaGroups.Add(group);
+    }
+
+    protected override void OnMediaChanged(Movie media)
+    {
+        SaveMovies(); // persist to JSON
     }
 }

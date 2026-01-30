@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
-using static MediaTracker.Domain.Movie;
+
 
 namespace MediaTracker.ViewModels
 {
@@ -59,15 +59,53 @@ namespace MediaTracker.ViewModels
 
         // Commands
         public ICommand ToggleFavoriteCommand { get; }
-
+        public ICommand AddWatchDateCommand { get; }
+        public ICommand RemoveWatchDateCommand { get; }
 
         // Constructor
         public MediaTabViewModel()
         {
+
             ToggleFavoriteCommand = new RelayCommand(obj =>
             {
-            if (obj is Movie movie)
-                movie.IsFavorite = !movie.IsFavorite;
+                if (obj is T media)
+                {
+                    media.IsFavorite = !media.IsFavorite;
+                    OnMediaChanged(media); // call hook for persistence
+                }
+            });
+
+            AddWatchDateCommand = new RelayCommand(obj =>
+            {
+                if (obj is T media && !string.IsNullOrWhiteSpace(NewWatchDate))
+                {
+                    try
+                    {
+                        AddWatchDate(media, NewWatchDate);
+                        NewWatchDate = "";
+                        OnPropertyChanged(nameof(NewWatchDate));
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        System.Windows.MessageBox.Show(ex.Message, "Invalid Input");
+                    }
+                }
+            });
+
+            RemoveWatchDateCommand = new RelayCommand(obj =>
+            {
+                if (obj is Tuple<T, DateTime> tuple)
+                {
+                    var media = tuple.Item1;
+                    var date = tuple.Item2;
+                    var result = System.Windows.MessageBox.Show(
+                        $"Are you sure you want to delete the watch date {date:dd/MM/yyyy} for '{media.Title}'?",
+                        "Confirm Delete",
+                        System.Windows.MessageBoxButton.YesNo,
+                        System.Windows.MessageBoxImage.Warning);
+                    if (result == System.Windows.MessageBoxResult.Yes)
+                        media.RemoveWatchDate(date);
+                }
             });
         }
 
@@ -106,5 +144,58 @@ namespace MediaTracker.ViewModels
                 foreach (var item in saga.Items)
                     item.SetDarkMode(isDark);
         }
+
+        public void AddWatchDate(T media, string input)
+        {
+            if (media == null || string.IsNullOrWhiteSpace(input))
+                return;
+
+            if (!DateTime.TryParseExact(
+                    input.Trim(),
+                    "dd/MM/yyyy",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None,
+                    out var date))
+                throw new InvalidOperationException("Invalid date format");
+
+            if (date.Year < 1900 || date.Year > 2099)
+                throw new InvalidOperationException("Year must be between 1900 and 2099");
+
+            if (!media.WatchDates.Contains(date))
+                media.WatchDates.Add(date);
+
+            // Sort descending
+            var sorted = media.WatchDates.OrderByDescending(d => d).ToList();
+            media.WatchDates.Clear();
+            foreach (var d in sorted)
+                media.WatchDates.Add(d);
+
+            media.OnPropertyChanged(nameof(media.LastWatchedDate));
+            media.OnPropertyChanged(nameof(media.Seen));
+
+            // Only if T is Movie, update DisplayMeta
+            if (media is Movie movie)
+                movie.OnPropertyChanged(nameof(movie.DisplayMeta));
+
+            OnMediaChanged(media);
+        }
+
+        public void RemoveWatchDate(T media, DateTime date)
+        {
+            if (media == null)
+                return;
+
+            if (media.WatchDates.Contains(date))
+                media.WatchDates.Remove(date);
+
+            media.OnPropertyChanged(nameof(media.LastWatchedDate));
+            media.OnPropertyChanged(nameof(media.Seen));
+
+            if (media is Movie movie)
+                movie.OnPropertyChanged(nameof(movie.DisplayMeta));
+            OnMediaChanged(media);
+        }
+
+        protected virtual void OnMediaChanged(T media) { }
     }
 }

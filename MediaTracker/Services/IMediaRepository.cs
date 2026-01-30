@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace MediaTracker.Services
 {
-    public interface IMediaRepository
+    public interface IMediaRepository<T>
     {
-        IEnumerable<Movie> LoadMovies();
-        void SaveMovies(IEnumerable<Movie> movies);
+        IEnumerable<T> Load();
+        void Save(IEnumerable<T> items);
     }
 }
