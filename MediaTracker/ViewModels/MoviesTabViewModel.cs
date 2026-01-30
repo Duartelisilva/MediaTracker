@@ -34,9 +34,10 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
 
 
     // Commands
-    public ICommand AddMovieCommand { get; }
+
     public ICommand AddWatchDateCommand { get; }
     public ICommand RemoveWatchDateCommand { get; }
+    public ICommand AddMovieCommand { get; }
     public ICommand RemoveMovieCommand { get; }
     public ICommand EditMovieCommand { get; }
     public ICommand SaveMovieCommand { get; }
@@ -76,13 +77,14 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
             movie.ClearNewWatchDate = () => NewWatchDate = "";
         }
 
-        AddMovieCommand = new RelayCommand(_ => AddMovie());
         AddWatchDateCommand = new RelayCommand(obj => AddWatchDate((Movie)obj!));
         RemoveWatchDateCommand = new RelayCommand(obj =>
         {
             var tuple = (Tuple<Movie, DateTime>)obj!;
             RemoveWatchDate(tuple);
         });
+
+        AddMovieCommand = new RelayCommand(_ => AddMovie());
 
         RemoveMovieCommand = new RelayCommand(obj =>
         {
@@ -334,6 +336,15 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
             MessageBox.Show(
                 "Invalid date format.\nUse: dd/MM/yyyy (example: 21/08/2024)",
                 "Invalid date");
+            return;
+        }
+
+        // Year validation
+        if (date.Year < 1900 || date.Year > 2099)
+        {
+            MessageBox.Show(
+                "Year must be between 1900 and 2099.",
+                "Invalid year");
             return;
         }
 

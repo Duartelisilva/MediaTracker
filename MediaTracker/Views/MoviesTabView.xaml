@@ -159,12 +159,14 @@
                                                                                    FontSize="16"
                                                                                    FontWeight="SemiBold"
                                                                                    Foreground="{Binding Brush, Converter={StaticResource LightBackgroundToForegroundConverter}}"
-                                                                                   TextWrapping="Wrap"/>
+                                                                                   TextWrapping="Wrap"
+                                                                                   HorizontalAlignment="Center"/>
                                                                         <!-- Info line -->
                                                                         <TextBlock Text="{Binding DisplayMeta}"
                                                                                    FontSize="12"
                                                                                    Foreground="{Binding Brush, Converter={StaticResource LightBackgroundToForegroundConverter}}"
-                                                                                   TextWrapping="Wrap"/>
+                                                                                   TextWrapping="Wrap"
+                                                                                   HorizontalAlignment="Center"/>
                                                                     </StackPanel>
                                                                 </Border>
                                                             </StackPanel>
@@ -300,6 +302,21 @@
                                                         <Button Width="28" Height="28"
                                                                 FontFamily="Segoe MDL2 Assets"
                                                                 FontSize="14"
+                                                                ToolTip="Favorite"
+                                                                Background="#FFD700"
+                                                                Foreground="Black"
+                                                                BorderBrush="Black"
+                                                                BorderThickness="1.5"
+                                                                Margin="0,0,4,0"
+                                                                Effect="{StaticResource IconShadow}"
+                                                                Command="{Binding DataContext.ToggleFavoriteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
+                                                            <TextBlock Text="&#xE735;" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Button>
+                                                        <Button Width="28" Height="28"
+                                                                FontFamily="Segoe MDL2 Assets"
+                                                                FontSize="14"
                                                                 ToolTip="Show/Hide Dates"
                                                                 Background="#607D8B"
                                                                 Foreground="White"
@@ -312,7 +329,6 @@
                                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
                                                             <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Button>
-
                                                         <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Edit"
                                                                 Command="{Binding DataContext.EditMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
@@ -340,6 +356,27 @@
                                                     </StackPanel>
                                                 </Border>
                                             </StackPanel>
+                                            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,0,0" IsHitTestVisible="False">
+                                                <Grid.Style>
+                                                    <Style TargetType="Grid">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsFavorite}" Value="True"/>
+                                                                    <Condition Binding="{Binding IsEditing}" Value="False"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Grid.Style>
+
+                                                <!-- Black outline -->
+                                                <TextBlock Text="★" FontSize="24" Foreground="Black" Margin="-2.3,-5,0,0"/>
+                                                <TextBlock Text="★" FontSize="18" Foreground="Gold"/>
+                                            </Grid>
+
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

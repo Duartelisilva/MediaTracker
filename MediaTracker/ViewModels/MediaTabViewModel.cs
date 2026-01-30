@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Media;
 using static MediaTracker.Domain.Movie;
 
@@ -18,11 +19,12 @@ namespace MediaTracker.ViewModels
         public ObservableCollection<Media.SagaGroup<T>> SagaGroups { get; } = new();
         private string? _newTitle;
         private string? _newSaga;
-        private string? _newWatchDate; 
+        private string? _newWatchDate;
         private bool _showComments;
         public bool IsDarkMode { get; private set; }
         private Color _newBaseColor = Colors.LightGray;
         public int NewYear { get; set; } = DateTime.Now.Year;
+
         // Parameters
         public string? NewTitle
         {
@@ -52,6 +54,21 @@ namespace MediaTracker.ViewModels
         {
             get => _newBaseColor;
             set { _newBaseColor = value; OnPropertyChanged(); }
+        }
+
+
+        // Commands
+        public ICommand ToggleFavoriteCommand { get; }
+
+
+        // Constructor
+        public MediaTabViewModel()
+        {
+            ToggleFavoriteCommand = new RelayCommand(obj =>
+            {
+            if (obj is Movie movie)
+                movie.IsFavorite = !movie.IsFavorite;
+            });
         }
 
 

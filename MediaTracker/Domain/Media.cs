@@ -18,6 +18,7 @@ namespace MediaTracker.Domain
         private int _year;
         private string? _saga;
         private string? _note;
+        private bool _isFavorite;
         private bool _datesPanelIsExpanded;
         private bool _isEditing = false;
         private bool _isExpanded = false;
@@ -73,6 +74,11 @@ namespace MediaTracker.Domain
             }
         }
 
+        public bool IsFavorite
+        {
+            get => _isFavorite;
+            set { _isFavorite = value; OnPropertyChanged(); }
+        }
         public bool DatesPanelIsExpanded
         {
             get => _datesPanelIsExpanded;
