@@ -6,8 +6,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 
 namespace MediaTracker.ViewModels
@@ -58,13 +60,32 @@ namespace MediaTracker.ViewModels
 
 
         // Commands
+        public ICommand AddMediaCommand { get; }
+        public ICommand RemoveMediaCommand { get; }
+        public ICommand EditItemCommand { get; }
+        public ICommand SaveItemCommand { get; }
+        public ICommand UndoItemCommand { get; }
+        public ICommand ToggleExpandCommand { get; }
+        public ICommand ToggleSidePanelCommand { get; }
         public ICommand ToggleFavoriteCommand { get; }
         public ICommand AddWatchDateCommand { get; }
         public ICommand RemoveWatchDateCommand { get; }
 
+        // Overridable hooks for commands
+        protected virtual bool CanAddMedia() => true;
+        protected abstract T CreateMedia();
+        protected virtual void BeforeAdd(T media) { }
+        protected virtual void AfterAdd(T media)
+        {
+            RefreshSagaGroups();
+            OnMediaChanged(media);
+        }
+
+
         // Constructor
         public MediaTabViewModel()
         {
+            AddMediaCommand = new RelayCommand(_ => AddMedia());
 
             ToggleFavoriteCommand = new RelayCommand(obj =>
             {
@@ -72,6 +93,68 @@ namespace MediaTracker.ViewModels
                 {
                     media.IsFavorite = !media.IsFavorite;
                     OnMediaChanged(media); // call hook for persistence
+                }
+            });
+
+            RemoveMediaCommand = new RelayCommand(obj =>
+            {
+                if (obj is T item)
+                    RemoveItem(item);
+            });
+
+            EditItemCommand = new RelayCommand(obj =>
+            {
+                if (obj is T item)
+                    BeginEdit(item);
+            });
+
+            SaveItemCommand = new RelayCommand(obj =>
+            {
+                if (obj is T item)
+                {
+                    if (!ValidateItem(item))
+                        return;
+
+                    SetEditing(item, false);
+
+                    AfterSave(item);
+
+                    OnMediaChanged(item);
+                }
+            });
+
+            UndoItemCommand = new RelayCommand(obj =>
+            {
+                if (obj is T item)
+                {
+                    UndoEdit(item);
+                    SetEditing(item, false);
+                }
+            });
+
+            ToggleExpandCommand = new RelayCommand(obj =>
+            {
+                if (obj is T clickedItem)
+                {
+                    // Collapse all others
+                    foreach (var item in MediaCollection)
+                        if (!ReferenceEquals(item, clickedItem))
+                            item.IsExpanded = false;
+
+                    clickedItem.IsExpanded = !clickedItem.IsExpanded;
+                }
+            });
+
+            ToggleSidePanelCommand = new RelayCommand(obj =>
+            {
+                if (obj is T item)
+                {
+                    // Close other panels
+                    foreach (var other in MediaCollection)
+                        if (!ReferenceEquals(other, item))
+                            other.IsSidePanelOpen = false;
+
+                    item.IsSidePanelOpen = !item.IsSidePanelOpen;
                 }
             });
 
@@ -197,5 +280,83 @@ namespace MediaTracker.ViewModels
         }
 
         protected virtual void OnMediaChanged(T media) { }
+
+        private void AddMedia()
+        {
+            if (!CanAddMedia())
+                return;
+
+            var media = CreateMedia();
+            if (media == null)
+                return;
+
+            BeforeAdd(media);
+
+            MediaCollection.Add(media);
+
+            AfterAdd(media);
+        }
+
+        protected virtual void RemoveItem(T item)
+        {
+            if (item == null) return;
+
+            var itemType = typeof(T).Name; // e.g., "Movie"
+            var title = item.Title ?? "Unnamed";
+
+            var result = MessageBox.Show(
+                $"Are you sure you want to delete the {itemType} '{title}'?",
+                "Confirm Delete",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            MediaCollection.Remove(item);
+            AfterRemove(item);
+        }
+
+        protected virtual void AfterRemove(T item)
+        {
+            RefreshSagaGroups();
+            OnMediaChanged(item);
+        }
+
+        protected virtual void BeginEdit(T item)
+        {
+            if (item == null) return;
+
+            // Undo other edits
+            var otherEditing = MediaCollection.FirstOrDefault(m => m != item && IsEditing(m));
+            if (otherEditing != null)
+            {
+                var result = MessageBox.Show(
+                    $"{typeof(T).Name} '{GetTitle(otherEditing)}' is already being edited.\n\n" +
+                    "Click Yes to discard changes and edit this item, or No to cancel.",
+                    "Editing in progress",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.No)
+                    return;
+
+                UndoEdit(otherEditing);
+            }
+
+            BackupItem(item);
+            SetEditing(item, true);
+        }
+
+        // Hooks to override in derived classes
+        protected virtual bool IsEditing(T item) => false;
+        protected virtual void SetEditing(T item, bool editing) { }
+        protected virtual void BackupItem(T item) { }
+        protected virtual void UndoEdit(T item) { }
+        protected virtual string GetTitle(T item) => "";
+
+        // Hooks to override Save
+        protected virtual bool ValidateItem(T item) => true;
+        protected virtual void AfterSave(T item) { }
     }
 }

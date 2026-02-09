@@ -69,7 +69,7 @@
                     <!-- Add Button -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Height="16"/>
-                        <Button Content="Add" Height="36" Padding="20,6" Background="#4CAF50" Foreground="White" Command="{Binding AddMovieCommand}"/>
+                        <Button Content="Add" Height="36" Padding="20,6" Background="#4CAF50" Foreground="White" Command="{Binding AddMediaCommand}"/>
                     </StackPanel>
 
                     <!-- Comments Button -->
@@ -330,25 +330,25 @@
                                                             <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Button>
                                                         <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Edit"
-                                                                Command="{Binding DataContext.EditMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
                                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"
                                                                 Background="#2196F3" Foreground="White" BorderBrush="Black" BorderThickness="1.5" Margin="0,0,4,0"
                                                                 Effect="{StaticResource IconShadow}"/>
                                                         <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Delete"
-                                                                Command="{Binding DataContext.RemoveMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                Command="{Binding DataContext.RemoveMediaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
                                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"
                                                                 Background="#F44336" Foreground="White" BorderBrush="Black" BorderThickness="1.5" Margin="0,0,0,0"
                                                                 Effect="{StaticResource IconShadow}"/>
                                                         <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Save"
-                                                                Command="{Binding DataContext.SaveMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                Command="{Binding DataContext.SaveItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
                                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}"
                                                                 Background="#4CAF50" Foreground="White" BorderBrush="Black" BorderThickness="1.5" Margin="0,0,4,0"
                                                                 Effect="{StaticResource IconShadow}"/>
                                                         <Button Width="28" Height="28" FontFamily="Segoe MDL2 Assets" FontSize="14" Content="" ToolTip="Undo"
-                                                                Command="{Binding DataContext.UndoMovieCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                Command="{Binding DataContext.UndoItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
                                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}"
                                                                 Background="#FFC107" Foreground="White" BorderBrush="Black" BorderThickness="1.5" Margin="0,0,0,0"

@@ -31,19 +31,7 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
         set { _newFranchiseNumber = value; OnPropertyChanged(); }
     }
 
-
-
-    // Commands
-    public ICommand AddMovieCommand { get; }
-    public ICommand RemoveMovieCommand { get; }
-    public ICommand EditMovieCommand { get; }
-    public ICommand SaveMovieCommand { get; }
-    public ICommand ToggleExpandCommand { get; }
-    public ICommand ToggleSidePanelCommand { get; }
-    public ICommand UndoMovieCommand { get; }
-
     private readonly IMediaRepository<Movie> _repository;
-
 
     public MoviesTabViewModel()
     {
@@ -72,234 +60,76 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
         {
             movie.ClearNewWatchDate = () => NewWatchDate = "";
         }
-
-        AddMovieCommand = new RelayCommand(_ => AddMovie());
-
-        RemoveMovieCommand = new RelayCommand(obj =>
-        {
-            if (obj is Movie movie)
-            {
-                var result = MessageBox.Show(
-                    $"Are you sure you want to delete '{movie.Title}'?",
-                    "Confirm Delete",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);
-
-                if (result != MessageBoxResult.Yes)
-                    return;
-
-                RemoveMovie(movie);
-            }
-
-        });
-
-        EditMovieCommand = new RelayCommand(obj =>
-        {
-            if (obj is Movie movie)
-            {
-                // Check if another movie is already being edited
-                var otherEditing = MediaCollection.FirstOrDefault(m => m != movie && m.IsEditing);
-                if (otherEditing != null)
-                {
-                    var result = MessageBox.Show(
-                        $"Movie '{otherEditing.Title}' is already being edited.\n\n" +
-                        "Click Yes to discard changes and edit this movie, or No to cancel.",
-                        "Editing in progress",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
-
-                    if (result == MessageBoxResult.No)
-                    {
-                        // User chooses to cancel — do nothing
-                        return;
-                    }
-
-                    // User chooses Yes — undo previous edits
-                    otherEditing.Title = otherEditing.BackupTitle;
-                    otherEditing.Year = otherEditing.BackupYear;
-                    otherEditing.Saga = otherEditing.BackupSaga;
-                    otherEditing.Franchise = otherEditing.BackupFranchise;
-                    otherEditing.FranchiseNumber = otherEditing.BackupFranchiseNumber;
-                    otherEditing.Note = otherEditing.BackupNote;
-                    otherEditing.BaseColor = otherEditing.BackupBaseColor;
-
-                    otherEditing.IsEditing = false;
-                }
-
-                // Backup current values for the new movie
-                movie.BackupTitle = movie.Title;
-                movie.BackupYear = movie.Year;
-                movie.BackupSaga = movie.Saga;
-                movie.BackupFranchise = movie.Franchise;
-                movie.BackupFranchiseNumber = movie.FranchiseNumber;
-                movie.BackupNote = movie.Note;
-                movie.BackupBaseColor = movie.BaseColor;
-
-                // Enable edit mode for this movie
-                movie.IsEditing = true;
-            }
-        });
-
-        SaveMovieCommand = new RelayCommand(obj =>
-        {
-            if (obj is Movie movie)
-            {
-                if (!ValidateMovie(movie))
-                    return; // don't save if validation fails
-
-                movie.IsEditing = false;
-
-                // Re-sort movies after editing
-                var sorted = MediaCollection
-                    .OrderBy(m => m.Franchise ?? m.Title)
-                    .ThenBy(m => m.FranchiseNumber ?? 0)
-                    .ThenBy(m => m.Year)
-                    .ToList();
-
-                MediaCollection.Clear();
-                foreach (var m in sorted)
-                    MediaCollection.Add(m);
-
-                if (!string.IsNullOrWhiteSpace(movie.Franchise))
-                {
-                    var sameFranchise = MediaCollection
-                        .Where(m => string.Equals(m.Franchise, movie.Franchise, StringComparison.OrdinalIgnoreCase));
-
-                    foreach (var m in sameFranchise)
-                        m.BaseColor = movie.BaseColor;
-                }
-
-                SaveMovies();
-                RefreshSagaGroups();
-                movie.IsExpanded = false;
-            }
-        });
-
-        UndoMovieCommand = new RelayCommand(obj =>
-        {
-            if (obj is Movie movie)
-            {
-                // Restore backup values
-                movie.Title = movie.BackupTitle;
-                movie.Year = movie.BackupYear;
-                movie.Saga = movie.BackupSaga;
-                movie.Franchise = movie.BackupFranchise;
-                movie.FranchiseNumber = movie.BackupFranchiseNumber;
-                movie.Note = movie.BackupNote;
-                movie.BaseColor = movie.BackupBaseColor;
-
-                movie.IsEditing = false;
-            }
-        });
-
-        ToggleExpandCommand = new RelayCommand(obj =>
-        {
-            if (obj is Movie clickedMovie)
-            {
-                // Close all other movies
-                foreach (var movie in MediaCollection)
-                {
-                    if (movie != clickedMovie)
-                        movie.IsExpanded = false;
-                }
-
-                // Toggle the clicked movie
-                clickedMovie.IsExpanded = !clickedMovie.IsExpanded;
-            }
-        });
-
-        ToggleSidePanelCommand = new RelayCommand(obj =>
-        {
-            if (obj is Movie movie)
-            {
-                // Close other panels
-                foreach (var m in MediaCollection)
-                    if (m != movie) m.IsSidePanelOpen = false;
-
-                // Toggle clicked panel
-                movie.IsSidePanelOpen = !movie.IsSidePanelOpen;
-            }
-        });
     }
 
-
-    private void AddMovie()
+    protected override bool CanAddMedia()
     {
         if (string.IsNullOrWhiteSpace(NewTitle))
         {
-            MessageBox.Show("Title is required.", "Invalid input");
-            return;
+            MessageBox.Show("Title is required.");
+            return false;
         }
 
         if (NewYear < 1900 || NewYear > 2099)
         {
-            MessageBox.Show("Year must be between 1900 and 2099.", "Invalid input");
-            return;
+            MessageBox.Show("Invalid year.");
+            return false;
         }
 
-        // Franchise/franchise number rules
         bool hasFranchise = !string.IsNullOrWhiteSpace(NewFranchise);
-        bool hasFranchiseNumber = NewFranchiseNumber.HasValue;
+        bool hasNumber = NewFranchiseNumber.HasValue;
 
-        if ((hasFranchise && !hasFranchiseNumber) || (!hasFranchise && hasFranchiseNumber)) // only one filled
+        if (hasFranchise ^ hasNumber)
         {
-            MessageBox.Show("Both Franchise and Franchise Number must be filled together.", "Invalid input");
-            return;
+            MessageBox.Show("Franchise and number must be filled together.");
+            return false;
         }
 
-
-        string trimmedTitle = NewTitle?.Trim() ?? "";
-        string? trimmedFranchise = NewFranchise?.Trim();
-
-        // Duplicate check: same title and same franchise
         bool exists = MediaCollection.Any(m =>
-            string.Equals(m.Title, trimmedTitle, StringComparison.OrdinalIgnoreCase) &&
-            string.Equals(m.Franchise ?? "", trimmedFranchise ?? "", StringComparison.OrdinalIgnoreCase)
-        );
+            string.Equals(m.Title, NewTitle, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(m.Saga ?? "", NewSaga ?? "", StringComparison.OrdinalIgnoreCase));
 
         if (exists)
         {
-            MessageBox.Show("A movie with the same title and franchise already exists.", "Duplicate Movie");
-            return;
+            MessageBox.Show("A movie with the same title and Saga already exists.", "Duplicate Movie");
+            return false;
         }
+        return true;
+    }
 
-
-        // Create movie
+    protected override Movie CreateMedia()
+    {
         var movie = new Movie
         {
-            Title = trimmedTitle,
-            Franchise = hasFranchise ? trimmedFranchise : null,
-            FranchiseNumber = hasFranchiseNumber ? NewFranchiseNumber : null,
+            Title = NewTitle!.Trim(),
             Saga = NewSaga,
             Year = NewYear,
+            Franchise = string.IsNullOrWhiteSpace(NewFranchise) ? null : NewFranchise,
+            FranchiseNumber = NewFranchiseNumber
         };
 
-        if (!string.IsNullOrWhiteSpace(trimmedFranchise))
-        {
-            var existing = MediaCollection.FirstOrDefault(m =>
-                string.Equals(m.Franchise, trimmedFranchise, StringComparison.OrdinalIgnoreCase));
+        var existing = MediaCollection.FirstOrDefault(m =>
+            string.Equals(m.Franchise, movie.Franchise, StringComparison.OrdinalIgnoreCase));
 
-            if (existing != null)
-                movie.BaseColor = existing.BaseColor; // inherit color from existing franchise
-        }
+        if (existing != null)
+            movie.BaseColor = existing.BaseColor;
+
         movie.SetDarkMode(IsDarkMode);
-        MediaCollection.Add(movie);
+        return movie;
+    }
 
-        // Sort movies: group by franchise, then by franchise number
-        var sorted = MediaCollection
-            .OrderBy(m => m.Franchise ?? m.Title)
-            .ThenBy(m => m.FranchiseNumber ?? 0)
-            .ThenBy(m => m.Year)
-            .ToList();
+    protected override void AfterAdd(Movie movie)
+    {
+        SortMediaCollection();
 
-        MediaCollection.Clear();
-        foreach (var m in sorted)
-            MediaCollection.Add(m);
-
-        RefreshGroups();
-        SaveMovies();
+        _repository.Save(MediaCollection);
         RefreshSagaGroups();
 
+        ResetInputs();
+    }
+
+    private void ResetInputs()
+    {
         NewTitle = "";
         NewYear = DateTime.Now.Year;
         NewSaga = "";
@@ -308,24 +138,17 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
         NewWatchDate = "";
     }
 
-    private void SaveMovies()
+    protected override void AfterRemove(Movie movie)
     {
-        _repository.Save(MediaCollection);
-    }
-
-    private void RemoveMovie(Movie movie)
-    {
-        if (movie == null) return;
-
-        MediaCollection.Remove(movie); // UI updates automatically because it's ObservableCollection
-        SaveMovies();                  // persist changes to JSON
-        RefreshSagaGroups();
+        base.AfterRemove(movie);
+        _repository.Save(MediaCollection); // movie-specific persistence
     }
 
 
     private bool ValidateMovie(Movie movie)
     {
         string title = movie.Title?.Trim() ?? "";
+        string saga = movie.Saga?.Trim() ?? "";
         string? franchise = movie.Franchise?.Trim();
         int year = movie.Year;
 
@@ -362,44 +185,87 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
         bool exists = MediaCollection.Any(m =>
             m != movie &&
             string.Equals(m.Title, title, StringComparison.OrdinalIgnoreCase) &&
-            string.Equals(m.Franchise ?? "", franchise ?? "", StringComparison.OrdinalIgnoreCase)
+            string.Equals(m.Saga ?? "", saga ?? "", StringComparison.OrdinalIgnoreCase)
         );
 
         if (exists)
         {
-            MessageBox.Show("A movie with the same title and franchise already exists.", "Duplicate Movie");
+            MessageBox.Show("A movie with the same title and Saga already exists.", "Duplicate Movie");
             return false;
         }
 
         // If everything passes, update trimmed values
         movie.Title = title;
+        movie.Saga = Media.Normalize(saga);
         movie.Franchise = Media.Normalize(franchise);
         movie.Note = movie.Note?.Trim();
         return true;
     }
-    private void RefreshGroups()
-    {
-        var groups = MediaCollection
-            .GroupBy(m => string.IsNullOrWhiteSpace(m.Saga) ? "Undefined" : m.Saga)
-            .OrderBy(g => g.Key == "Undefined" ? "ZZZ" : g.Key) // Undefined at bottom
-            .Select(g =>
-            {
-                var group = new Media.SagaGroup<Movie> { Name = g.Key };
-                foreach (var item in g.OrderBy(m => m.Franchise ?? m.Title)
-                                       .ThenBy(m => m.FranchiseNumber ?? 0))
-                {
-                    group.Items.Add(item);
-                }
-                return group;
-            });
 
-        SagaGroups.Clear();
-        foreach (var group in groups)
-            SagaGroups.Add(group);
+    protected override bool IsEditing(Movie item) => item.IsEditing;
+
+    protected override void SetEditing(Movie item, bool editing)
+    {
+        item.IsEditing = editing;
     }
+    protected override void BackupItem(Movie movie)
+    {
+        movie.BackupTitle = movie.Title;
+        movie.BackupYear = movie.Year;
+        movie.BackupSaga = movie.Saga;
+        movie.BackupFranchise = movie.Franchise;
+        movie.BackupFranchiseNumber = movie.FranchiseNumber;
+        movie.BackupNote = movie.Note;
+        movie.BackupBaseColor = movie.BaseColor;
+    }
+
+    protected override void UndoEdit(Movie movie)
+    {
+        movie.Title = movie.BackupTitle;
+        movie.Year = movie.BackupYear;
+        movie.Saga = movie.BackupSaga;
+        movie.Franchise = movie.BackupFranchise;
+        movie.FranchiseNumber = movie.BackupFranchiseNumber;
+        movie.Note = movie.BackupNote;
+        movie.BaseColor = movie.BackupBaseColor;
+
+        movie.IsEditing = false;
+    }
+
+    protected override string GetTitle(Movie movie) => movie.Title ?? "Unnamed";
 
     protected override void OnMediaChanged(Movie media)
     {
-        SaveMovies(); // persist to JSON
+        _repository.Save(MediaCollection);
+    }
+
+    protected override bool ValidateItem(Movie movie) => ValidateMovie(movie);
+
+    protected override void AfterSave(Movie movie)
+    {
+        SortMediaCollection();
+
+        if (!string.IsNullOrWhiteSpace(movie.Franchise))
+        {
+            var sameFranchise = MediaCollection
+                .Where(m => string.Equals(m.Franchise, movie.Franchise, StringComparison.OrdinalIgnoreCase));
+            foreach (var m in sameFranchise)
+                m.BaseColor = movie.BaseColor;
+        }
+
+        RefreshSagaGroups();
+    }
+
+    private void SortMediaCollection()
+    {
+        var sorted = MediaCollection
+            .OrderBy(m => m.Franchise ?? m.Title)
+            .ThenBy(m => m.FranchiseNumber ?? 0)
+            .ThenBy(m => m.Year)
+            .ToList();
+
+        MediaCollection.Clear();
+        foreach (var m in sorted)
+            MediaCollection.Add(m);
     }
 }
