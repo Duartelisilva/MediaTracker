@@ -26,6 +26,7 @@ namespace MediaTracker.ViewModels
         public bool IsDarkMode { get; private set; }
         private Color _newBaseColor = Colors.LightGray;
         public int NewYear { get; set; } = DateTime.Now.Year;
+        private string? _searchText;
 
         // Parameters
         public string? NewTitle
@@ -56,6 +57,12 @@ namespace MediaTracker.ViewModels
         {
             get => _newBaseColor;
             set { _newBaseColor = value; OnPropertyChanged(); }
+        }
+
+        public override void SetSearch(string? text)
+        {
+            _searchText = text;
+            RefreshSagaGroups();
         }
 
 
@@ -206,8 +213,26 @@ namespace MediaTracker.ViewModels
         {
             SagaGroups.Clear();
 
+            // Search 
+            IEnumerable<T> source = MediaCollection;
+            if (!string.IsNullOrWhiteSpace(_searchText))
+            {
+                var search = Media.Normalize(_searchText.ToLower());
+
+                if (search == "favorite")
+                {
+                    // Only show media marked as favorite
+                    source = source.Where(m => m.IsFavorite);
+                }
+                else
+                {
+                    source = source.Where(m =>
+                        (m.Title ?? "").ToLower().Contains(search));
+                }
+            }
+
             // Group movies by Saga
-            var groups = MediaCollection
+            var groups = source
                 .GroupBy(m => string.IsNullOrWhiteSpace(m.Saga) ? "Undefined" : m.Saga)
                 .OrderBy(g => g.Key == "Undefined" ? "ZZZ" : g.Key); // Undefined goes last
 

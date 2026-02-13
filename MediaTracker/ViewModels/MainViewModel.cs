@@ -26,6 +26,21 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    private string? _searchText;
+    public string? SearchText
+    {
+        get => _searchText;
+        set
+        {
+            if (_searchText == value) return;
+            _searchText = value;
+            OnPropertyChanged();
+
+            foreach (var tab in Tabs)
+                tab.SetSearch(_searchText);
+        }
+    }
+
     public ICommand ToggleDarkModeCommand { get; }
     public MainViewModel()
     {
