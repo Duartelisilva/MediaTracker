@@ -245,7 +245,7 @@ namespace MediaTracker.ViewModels
             }
         }
 
-        public void UpdateMediaDarkMode(bool isDark)
+        public override void UpdateMediaDarkMode(bool isDark)
         {
             IsDarkMode = isDark;
             foreach (var saga in SagaGroups)

@@ -21,11 +21,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
             ApplyTheme();
             SaveThemePreference();
 
-            foreach (var moviesTab in Tabs.OfType<MoviesTabViewModel>())
-                moviesTab.UpdateMediaDarkMode(_isDarkMode);
-
-            foreach (var seriesTab in Tabs.OfType<SeriesTabViewModel>())
-                seriesTab.UpdateMediaDarkMode(_isDarkMode);
+            foreach (var tab in Tabs)
+                tab.UpdateMediaDarkMode(_isDarkMode);
         }
     }
 
