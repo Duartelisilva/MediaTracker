@@ -15,7 +15,7 @@ namespace MediaTracker.ViewModels;
 
 public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
 {
-    public override string Header => "Items";
+    public override string Header => "Movies";
 
     private string? _newFranchise;
     public string? NewFranchise

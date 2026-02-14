@@ -1,29 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
+using System.Windows.Media;
 
 namespace MediaTracker.Domain;
 
-public class Series
+public class Series : Media
 {
-    public string Title { get; set; } = string.Empty;
-    public int Year { get; set; }
-    public List<Season> Seasons { get; } = new();
-    public List<DateTime> WatchDates { get; } = new(); // whole series
+    private int? _yearEnd;
+    private int? _numberOfSeasons;
 
-    public bool Seen => WatchDates.Count > 0 || Seasons.Any(s => s.Seen);
-
-    public void AddWatchDate(DateTime date) => WatchDates.Add(date);
-    public void RemoveWatchDate(DateTime date) => WatchDates.Remove(date);
-
-    public Season GetOrCreateSeason(int number)
+    public int? YearEnd
     {
-        var season = Seasons.Find(s => s.Number == number);
-        if (season == null)
+        get => _yearEnd;
+        set { _yearEnd = value; OnPropertyChanged(); }
+    }
+
+    public int? NumberOfSeasons
+    {
+        get => _numberOfSeasons;
+        set { _numberOfSeasons = value; OnPropertyChanged(); }
+    }
+
+    [JsonIgnore] public int? BackupYearEnd { get; set; }
+    [JsonIgnore] public int? BackupNumberOfSeasons { get; set; }
+
+    public override string DisplayMeta
+    {
+        get
         {
-            season = new Season { Number = number };
-            Seasons.Add(season);
+            var parts = new List<string>();
+
+            if (Year > 0)
+            {
+                string yearRange = YearEnd.HasValue ? $"{Year} – {YearEnd}" : $"{Year} – Ongoing";
+                parts.Add(yearRange);
+            }
+
+            if (NumberOfSeasons.HasValue)
+                parts.Add(NumberOfSeasons.Value.ToString());
+
+            if (LastWatchedDate.HasValue)
+                parts.Add(LastWatchedDate.Value.ToString("dd/MM/yyyy"));
+            return string.Join(" • ", parts);
         }
-        return season;
     }
 }

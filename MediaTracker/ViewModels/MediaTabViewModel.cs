@@ -245,7 +245,7 @@ namespace MediaTracker.ViewModels
             }
         }
 
-        public void UpdateMoviesDarkMode(bool isDark)
+        public void UpdateMediaDarkMode(bool isDark)
         {
             IsDarkMode = isDark;
             foreach (var saga in SagaGroups)
@@ -281,9 +281,7 @@ namespace MediaTracker.ViewModels
             media.OnPropertyChanged(nameof(media.LastWatchedDate));
             media.OnPropertyChanged(nameof(media.Seen));
 
-            // Only if T is Movie, update DisplayMeta
-            if (media is Movie movie)
-                movie.OnPropertyChanged(nameof(movie.DisplayMeta));
+            media.OnPropertyChanged(nameof(media.DisplayMeta));
 
             OnMediaChanged(media);
         }

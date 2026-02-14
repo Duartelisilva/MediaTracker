@@ -22,7 +22,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
             SaveThemePreference();
 
             foreach (var moviesTab in Tabs.OfType<MoviesTabViewModel>())
-                moviesTab.UpdateMoviesDarkMode(_isDarkMode);
+                moviesTab.UpdateMediaDarkMode(_isDarkMode);
+
+            foreach (var seriesTab in Tabs.OfType<SeriesTabViewModel>())
+                seriesTab.UpdateMediaDarkMode(_isDarkMode);
         }
     }
 

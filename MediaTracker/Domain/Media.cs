@@ -27,6 +27,8 @@ namespace MediaTracker.Domain
         [JsonIgnore] private Color _baseDarkColor = Colors.Transparent;
         [JsonIgnore] private bool _currentDarkMode;
 
+        public virtual string DisplayMeta => "";
+
         // Backup fields
         [JsonIgnore] public string BackupTitle { get; set; } = "";
         [JsonIgnore] public int BackupYear { get; set; }

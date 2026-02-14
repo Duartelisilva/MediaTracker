@@ -32,7 +32,7 @@ public class Movie : Media
 
     [JsonIgnore] public string? BackupFranchise { get; set; }
     [JsonIgnore] public int? BackupFranchiseNumber { get; set; }   
-    public string DisplayMeta
+    public override string DisplayMeta
     {
         get
         {
