@@ -89,8 +89,8 @@
 
 
         <!-- SERIES LIST -->
-        <ScrollViewer Grid.Row="1" Background="{DynamicResource BackgroundBrush}">
-            <ItemsControl ItemsSource="{Binding SagaGroups}">
+        <ScrollViewer x:Name="MainScrollViewer" Grid.Row="1" Background="{DynamicResource BackgroundBrush}">
+            <ItemsControl x:Name="MainItemsControl" ItemsSource="{Binding SagaGroups}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0,0,0,24">
@@ -137,7 +137,7 @@
                                                     BorderThickness="1.5"
                                                     Background="{Binding BrushForDarkMode}"   
                                                     Effect="{StaticResource CardShadow}"
-                                                    MouseLeftButtonUp="SeriesCard_Click">
+                                                    MouseLeftButtonUp="MediaCard_Click">
                                                 <StackPanel>
                                                     <!-- HEADER -->
                                                     <Grid>

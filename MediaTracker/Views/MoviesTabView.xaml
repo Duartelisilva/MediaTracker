@@ -80,7 +80,9 @@
                                       Padding="20,6"
                                       Background="#607D8B"
                                       Foreground="White"
-                                      IsChecked="{Binding ShowComments}"/>
+                                      IsChecked="{Binding ShowComments, Mode=TwoWay}"
+                                      Checked="CommentsToggle_Click"
+                                      Unchecked="CommentsToggle_Click"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
@@ -89,8 +91,8 @@
 
 
         <!-- MOVIE LIST -->
-        <ScrollViewer Grid.Row="1" Background="{DynamicResource BackgroundBrush}">
-            <ItemsControl ItemsSource="{Binding SagaGroups}">
+        <ScrollViewer x:Name="MainScrollViewer" Grid.Row="1" Background="{DynamicResource BackgroundBrush}">
+            <ItemsControl x:Name="MainItemsControl" ItemsSource="{Binding SagaGroups}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0,0,0,24">
@@ -137,7 +139,7 @@
                                                     BorderThickness="1.5"
                                                     Background="{Binding BrushForDarkMode}"   
                                                     Effect="{StaticResource CardShadow}"
-                                                    MouseLeftButtonUp="MovieCard_Click">
+                                                    MouseLeftButtonUp="MediaCard_Click">
                                                 <StackPanel>
                                                     <!-- HEADER -->
                                                     <Grid>
