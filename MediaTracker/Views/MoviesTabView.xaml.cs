@@ -25,11 +25,23 @@ public partial class MoviesTabView
             (MoviesTabViewModel)DataContext);
     }
 
-    private void CommentsToggle_Click(object sender, RoutedEventArgs e)
+    private async void CommentsToggle_Click(object sender, RoutedEventArgs e)
     {
-        MediaTabViewHelper<Movie>.PreserveTopVisibleItem(
+        if (DataContext is MoviesTabViewModel vm)
+        {
+            MainItemsControl.Visibility = Visibility.Hidden;
+
+            MediaTabViewHelper<Movie>.PreserveTopVisibleItem(
             MainScrollViewer,
             MainItemsControl,
             () => { });
+
+            vm.RaiseShowComments();
+
+            await Dispatcher.InvokeAsync(() => { },
+                System.Windows.Threading.DispatcherPriority.Render);
+
+            MainItemsControl.Visibility = Visibility.Visible;
+        }
     }
 }

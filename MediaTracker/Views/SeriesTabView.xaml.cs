@@ -25,11 +25,23 @@ public partial class SeriesTabView
             (SeriesTabViewModel)DataContext);
     }
 
-    private void CommentsToggle_Click(object sender, RoutedEventArgs e)
+    private async void CommentsToggle_Click(object sender, RoutedEventArgs e)
     {
-        MediaTabViewHelper<Series>.PreserveTopVisibleItem(
+        if (DataContext is SeriesTabViewModel vm)
+        {
+            MainItemsControl.Visibility = Visibility.Hidden;
+
+            MediaTabViewHelper<Series>.PreserveTopVisibleItem(
             MainScrollViewer,
             MainItemsControl,
             () => { });
+
+            vm.RaiseShowComments();
+
+            await Dispatcher.InvokeAsync(() => { },
+                System.Windows.Threading.DispatcherPriority.Render);
+
+            MainItemsControl.Visibility = Visibility.Visible;
+        }
     }
 }

@@ -80,7 +80,9 @@
                                       Padding="20,6"
                                       Background="#607D8B"
                                       Foreground="White"
-                                      IsChecked="{Binding ShowComments}"/>
+                                      IsChecked="{Binding ShowComments, Mode=TwoWay}"
+                                      Checked="CommentsToggle_Click"
+                                      Unchecked="CommentsToggle_Click"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
@@ -210,7 +212,7 @@
                                                         </StackPanel>
                                                     </Grid>
 
-                                                    <!-- NOTE -->
+                                                    <!-- COMMENTS -->
                                                     <Border Margin="0,10,0,0"
                                                             Padding="10"
                                                             Background="#DCDCDC"

@@ -50,7 +50,7 @@ namespace MediaTracker.ViewModels
         public bool ShowComments
         {
             get => _showComments;
-            set { _showComments = value; OnPropertyChanged(); }
+            set { _showComments = value;}
         }
 
         public Color NewBaseColor
@@ -205,6 +205,11 @@ namespace MediaTracker.ViewModels
         protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void RaiseShowComments()
+        {
+            OnPropertyChanged(nameof(ShowComments));
         }
 
 
