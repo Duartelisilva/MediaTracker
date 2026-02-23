@@ -238,7 +238,8 @@ public sealed class SeriesTabViewModel : MediaTabViewModel<Series>
     private void SortMediaCollection()
     {
         var sorted = MediaCollection
-            .OrderBy(m => m.Title)
+            .OrderBy(m => m.Year)
+            .ThenBy(m => m.Title)
             .ToList();
 
         MediaCollection.Clear();

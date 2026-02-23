@@ -44,27 +44,27 @@
                     <!-- Title -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Title:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="180" Height="36" Padding="4" Text="{Binding NewTitle}" Watermark="Title"/>
+                        <xctk:WatermarkTextBox Width="180" Height="36" Padding="4" Text="{Binding NewTitle}" VerticalContentAlignment="Center" Watermark="Title"/>
                     </StackPanel>
                     <!-- Year -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Year:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYear}" Watermark="Year"/>
+                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYear}" VerticalContentAlignment="Center" Watermark="Year"/>
                     </StackPanel>
                     <!-- Saga -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Saga:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="120" Height="36" Padding="4" Text="{Binding NewSaga}" Watermark="Saga"/>
+                        <xctk:WatermarkTextBox Width="120" Height="36" Padding="4" Text="{Binding NewSaga}" VerticalContentAlignment="Center" Watermark="Saga"/>
                     </StackPanel>
                     <!-- Franchise -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Franchise:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="120" Height="36" Padding="4" Text="{Binding NewFranchise}" Watermark="Franchise"/>
+                        <xctk:WatermarkTextBox Width="120" Height="36" Padding="4" Text="{Binding NewFranchise}" VerticalContentAlignment="Center" Watermark="Franchise"/>
                     </StackPanel>
                     <!-- Franchise Number -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Franchise #:" Height="16" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewFranchiseNumber}" Watermark="#" />
+                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewFranchiseNumber}" VerticalContentAlignment="Center" Watermark="#" />
                     </StackPanel>
                     <!-- Add Button -->
                     <StackPanel Margin="0,0,12,0">

@@ -50,7 +50,7 @@ namespace MediaTracker.ViewModels
         public bool ShowComments
         {
             get => _showComments;
-            set { _showComments = value;}
+            set { _showComments = value; }
         }
 
         public Color NewBaseColor
@@ -194,7 +194,7 @@ namespace MediaTracker.ViewModels
                         System.Windows.MessageBoxButton.YesNo,
                         System.Windows.MessageBoxImage.Warning);
                     if (result == System.Windows.MessageBoxResult.Yes)
-                        media.RemoveWatchDate(date);
+                        RemoveWatchDate(media, date);
                 }
             });
         }
@@ -302,8 +302,8 @@ namespace MediaTracker.ViewModels
             media.OnPropertyChanged(nameof(media.LastWatchedDate));
             media.OnPropertyChanged(nameof(media.Seen));
 
-            if (media is Movie movie)
-                movie.OnPropertyChanged(nameof(movie.DisplayMeta));
+           // if (media is Movie || media is Series || media is Books)
+                media.OnPropertyChanged(nameof(media.DisplayMeta));
             OnMediaChanged(media);
         }
 

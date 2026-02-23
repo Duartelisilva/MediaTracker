@@ -5,13 +5,13 @@ using System.Windows.Data;
 
 namespace MediaTracker.Converters
 {
-    public class MovieDateTupleConverter : IMultiValueConverter
+    public class BooksDateTupleConverter : IMultiValueConverter
     {
         public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length != 2) return null;
-            if (values[0] is Movie movie && values[1] is DateTime dt)
-                return Tuple.Create(movie, dt);
+            if (values[0] is Books book && values[1] is DateTime dt)
+                return Tuple.Create(book, dt);
             return null;
         }
 

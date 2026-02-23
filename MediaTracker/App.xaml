@@ -19,6 +19,10 @@
             <DataTemplate DataType="{x:Type vm:SeriesTabViewModel}">
                 <views:SeriesTabView />
             </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:BooksTabViewModel}">
+                <views:BooksTabView />
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
