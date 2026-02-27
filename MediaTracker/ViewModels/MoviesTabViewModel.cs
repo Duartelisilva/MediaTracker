@@ -259,7 +259,7 @@ public sealed class MoviesTabViewModel : MediaTabViewModel<Movie>
     private void SortMediaCollection()
     {
         var sorted = MediaCollection
-            .OrderBy(m => m.Franchise ?? m.Title)
+            .OrderBy(m => m.Franchise ?? m.Title ?? "")
             .ThenBy(m => m.FranchiseNumber ?? 0)
             .ThenBy(m => m.Year)
             .ToList();

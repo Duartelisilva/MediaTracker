@@ -52,6 +52,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         Tabs.Add(new MoviesTabViewModel());
         Tabs.Add(new SeriesTabViewModel());
         Tabs.Add(new BooksTabViewModel());
+        Tabs.Add(new WishlistTabViewModel());
     }
 
     public void LoadThemePreference()
