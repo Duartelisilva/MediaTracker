@@ -112,6 +112,7 @@ public sealed class WishlistTabViewModel : MediaTabViewModel<Wishlist>
             Saga = SelectedType.ToString()
         };
 
+        wishlist.BaseColor = Colors.Transparent;
         wishlist.SetDarkMode(IsDarkMode);
         return wishlist;
     }

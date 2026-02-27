@@ -101,6 +101,7 @@ public sealed class BooksTabViewModel : MediaTabViewModel<Books>
             BookNumber = NewBookNumber
         };
 
+        book.BaseColor = Colors.Transparent;
         book.SetDarkMode(IsDarkMode);
         return book;
     }

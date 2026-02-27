@@ -107,6 +107,7 @@ public sealed class SeriesTabViewModel : MediaTabViewModel<Series>
             NumberOfSeasons = NewNumberOfSeasons
         };
 
+        series.BaseColor = Colors.Transparent;
         series.SetDarkMode(IsDarkMode);
         return series;
     }
