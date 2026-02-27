@@ -28,6 +28,8 @@ namespace MediaTracker.ViewModels
         public int NewYear { get; set; } = DateTime.Now.Year;
         private string? _searchText;
 
+        protected SearchOption CurrentSearchOption { get; private set; } = SearchOption.Title;
+
         // Parameters
         public string? NewTitle
         {
@@ -65,6 +67,11 @@ namespace MediaTracker.ViewModels
             RefreshSagaGroups();
         }
 
+        public override void SetSearchOption(SearchOption option)
+        {
+            CurrentSearchOption = option;
+            RefreshSagaGroups();
+        }
 
         // Commands
         public ICommand AddMediaCommand { get; }
@@ -220,20 +227,23 @@ namespace MediaTracker.ViewModels
 
             // Search 
             IEnumerable<T> source = MediaCollection;
-            if (!string.IsNullOrWhiteSpace(_searchText))
+            if (CurrentSearchOption == SearchOption.Favorite)
             {
-                var search = Media.Normalize(_searchText.ToLower());
+                source = source.Where(m => m.IsFavorite);
+            }
+            else if (!string.IsNullOrWhiteSpace(_searchText))
+            {
+                string search = Media.Normalize(_searchText.ToLower());
 
-                if (search == "favorite")
+                source = CurrentSearchOption switch
                 {
-                    // Only show media marked as favorite
-                    source = source.Where(m => m.IsFavorite);
-                }
-                else
-                {
-                    source = source.Where(m =>
-                        (m.Title ?? "").ToLower().Contains(search));
-                }
+                    SearchOption.Title => source.Where(m => (m.Title ?? "").ToLower().Contains(search)),
+                    SearchOption.Year => source.Where(m => m.Year.ToString().Contains(search)),
+                    SearchOption.Saga => source.Where(m => (m.Saga ?? "").ToLower().Contains(search)),
+                    SearchOption.Franchise => source.Where(m => (m is Movie movie && (movie.Franchise ?? "").ToLower().Contains(search)) || false),
+                    SearchOption.Author => source.Where(m => (m is Books book && (book.Author ?? "").ToLower().Contains(search)) || false),
+                    _ => source
+                };
             }
 
             // Group movies by Saga

@@ -12,7 +12,6 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:NullableIntConverter x:Key="NullableIntConverter"/>
-        <converters:BooksDateTupleConverter x:Key="BooksDateTupleConverter"/>
         <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
         <converters:NullOrEmptyToSeparatorConverter x:Key="NullOrEmptyToSeparatorConverter"/>
         <converters:CollapseArrowConverter x:Key="CollapseArrowConverter"/>

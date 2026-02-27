@@ -5,6 +5,17 @@ using System.Windows;
 using System.Windows.Input;
 
 namespace MediaTracker.ViewModels;
+
+public enum SearchOption
+{
+    Title,
+    Year,
+    Saga,
+    Favorite,
+    Franchise, // Movies only
+    Author     // Books only
+}
+
 public sealed class MainViewModel : INotifyPropertyChanged
 {
     public ObservableCollection<TabViewModel> Tabs { get; } = new();
@@ -40,6 +51,46 @@ public sealed class MainViewModel : INotifyPropertyChanged
                 tab.SetSearch(_searchText);
         }
     }
+
+    private SearchOption _selectedSearchOption = SearchOption.Title;
+    public SearchOption SelectedSearchOption
+    {
+        get => _selectedSearchOption;
+        set
+        {
+            if (_selectedSearchOption == value) return;
+            _selectedSearchOption = value;
+            OnPropertyChanged();
+
+            foreach (var tab in Tabs)
+                tab.SetSearchOption(_selectedSearchOption);
+        }
+    }
+
+    private object _selectedTab;
+    public object SelectedTab
+    {
+        get => _selectedTab;
+        set
+        {
+            _selectedTab = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsMoviesTab));
+            OnPropertyChanged(nameof(IsBooksTab));
+
+            // Reset invalid search options
+            if (!IsMoviesTab && SelectedSearchOption == SearchOption.Franchise)
+                SelectedSearchOption = SearchOption.Title;
+
+            if (!IsBooksTab && SelectedSearchOption == SearchOption.Author)
+                SelectedSearchOption = SearchOption.Title;
+        }
+    }
+
+
+    public bool IsMoviesTab => SelectedTab is MoviesTabViewModel;
+    public bool IsBooksTab => SelectedTab is BooksTabViewModel;
+
 
     public ICommand ToggleDarkModeCommand { get; }
     public MainViewModel()

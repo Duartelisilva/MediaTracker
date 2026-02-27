@@ -24,7 +24,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="500"/>
             </Grid.ColumnDefinitions>
             <Button Command="{Binding ToggleDarkModeCommand}"
                 Grid.Column="0"
@@ -73,19 +73,93 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <xctk:WatermarkTextBox
-                     Grid.Column="3"
-                     Height="32"
-                     Width="200"
-                     Padding="6"
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Right"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                     Watermark="Search"/>
+            
+            <StackPanel Grid.Column="2"
+            Orientation="Horizontal"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center">
+                
+                <!-- Dropdown -->
+                <ComboBox Width="100"
+          Margin="0,0,6,0"
+          SelectedItem="{Binding SelectedSearchOption}"
+          VerticalContentAlignment="Center">
+
+                    <ComboBox.ItemsSource>
+                        <x:Array Type="{x:Type vm:SearchOption}">
+                            <vm:SearchOption>Title</vm:SearchOption>
+                            <vm:SearchOption>Year</vm:SearchOption>
+                            <vm:SearchOption>Saga</vm:SearchOption>
+                            <vm:SearchOption>Franchise</vm:SearchOption>
+                            <vm:SearchOption>Author</vm:SearchOption>
+                            <vm:SearchOption>Favorite</vm:SearchOption>
+                        </x:Array>
+                    </ComboBox.ItemsSource>
+
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="ComboBoxItem">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+
+                                <!-- Hide Author if NOT Books -->
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding}" 
+                                   Value="{x:Static vm:SearchOption.Author}"/>
+                                        <Condition Binding="{Binding DataContext.IsBooksTab, RelativeSource={RelativeSource AncestorType=Window}}"
+                                   Value="False"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </MultiDataTrigger>
+
+                                <!-- Hide Franchise if NOT Movies -->
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding}" 
+                                   Value="{x:Static vm:SearchOption.Franchise}"/>
+                                        <Condition Binding="{Binding DataContext.IsMoviesTab, RelativeSource={RelativeSource AncestorType=Window}}"
+                                   Value="False"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </MultiDataTrigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+
+                </ComboBox>
+
+
+                <!-- Search box -->
+                <xctk:WatermarkTextBox
+                    Width="200"
+                    Height="32"
+                    Padding="6"
+                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                    Watermark="Search">
+
+                    <xctk:WatermarkTextBox.Style>
+                        <Style TargetType="xctk:WatermarkTextBox">
+                            <Style.Triggers>
+                                <!-- Disable when Favorite selected -->
+                                <DataTrigger Binding="{Binding SelectedSearchOption}"
+                                 Value="{x:Static vm:SearchOption.Favorite}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                    <Setter Property="Text" Value=""/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </xctk:WatermarkTextBox.Style>
+
+                </xctk:WatermarkTextBox>
+
+            </StackPanel>
+
         </Grid>
 
         <!-- Main content -->
         <TabControl ItemsSource="{Binding Tabs}"
+                    SelectedItem="{Binding SelectedTab}"
                     Background="{DynamicResource BackgroundBrush}"
                     Foreground="{DynamicResource TextBrush}">
 
