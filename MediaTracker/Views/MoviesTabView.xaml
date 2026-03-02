@@ -46,15 +46,15 @@
                         <TextBlock Text="Title:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
                         <xctk:WatermarkTextBox Width="180" Height="36" Padding="4" Text="{Binding NewTitle}" VerticalContentAlignment="Center" Watermark="Title"/>
                     </StackPanel>
-                    <!-- Year -->
-                    <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Year:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYear}" VerticalContentAlignment="Center" Watermark="Year"/>
-                    </StackPanel>
                     <!-- Saga -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Saga:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
                         <xctk:WatermarkTextBox Width="120" Height="36" Padding="4" Text="{Binding NewSaga}" VerticalContentAlignment="Center" Watermark="Saga"/>
+                    </StackPanel>
+                    <!-- Year -->
+                    <StackPanel Margin="0,0,12,0">
+                        <TextBlock Text="Year:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
+                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYear}" VerticalContentAlignment="Center" Watermark="Year" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
                     </StackPanel>
                     <!-- Franchise -->
                     <StackPanel Margin="0,0,12,0">
@@ -64,7 +64,7 @@
                     <!-- Franchise Number -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Franchise #:" Height="16" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewFranchiseNumber}" VerticalContentAlignment="Center" Watermark="#" />
+                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewFranchiseNumber}" VerticalContentAlignment="Center" Watermark="#" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
                     </StackPanel>
                     <!-- Add Button -->
                     <StackPanel Margin="0,0,12,0">
@@ -197,12 +197,12 @@
                                                                         <ColumnDefinition Width="50"/>
                                                                     </Grid.ColumnDefinitions>
 
-                                                                    <xctk:WatermarkTextBox Grid.Column="0" Text="{Binding Year}" Watermark="Year" Margin="0,0,6,0"/>
+                                                                    <xctk:WatermarkTextBox Grid.Column="0" Text="{Binding Year}" Watermark="Year" Margin="0,0,6,0" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
                                                                     <xctk:WatermarkTextBox Grid.Column="1"
                                                                      Text="{Binding Franchise, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
                                                                      Watermark="Franchise" Margin="0,0,6,0"/>
                                                                     <xctk:WatermarkTextBox Grid.Column="2"
-                                                                     Text="{Binding FranchiseNumber, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Watermark="#"/>
+                                                                     Text="{Binding FranchiseNumber, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Watermark="#" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
                                                                 </Grid>
                                                                     <xctk:ColorPicker
                                                                         SelectedColor="{Binding BaseColor, Mode=TwoWay}"

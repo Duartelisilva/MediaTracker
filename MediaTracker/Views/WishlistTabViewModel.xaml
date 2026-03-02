@@ -49,7 +49,7 @@
                     <!-- Year -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Year:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYear}" VerticalContentAlignment="Center" Watermark="Year"/>
+                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYear}" VerticalContentAlignment="Center" Watermark="Year" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
                     </StackPanel>
 					
 					<!-- Category Type -->
@@ -67,8 +67,8 @@
 					<!-- Series -->
 					<StackPanel Margin="0,0,12,0" 
                             Visibility="{Binding SelectedType, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter=Series}">
-						<TextBlock Text="Author:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-						<xctk:WatermarkTextBox Width="60" Height="36" Text="{Binding NewSeasonNumber}" Watermark="Season" VerticalContentAlignment="Center"/>
+						<TextBlock Text="Season #:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
+                        <xctk:WatermarkTextBox Width="60" Height="36" Text="{Binding NewSeasonNumber}" Watermark="#" VerticalContentAlignment="Center" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
 					</StackPanel>
 					<!-- Book -->
 					<StackPanel Margin="0,0,12,0" 
@@ -197,11 +197,11 @@
                                                                     <Grid.ColumnDefinitions>
                                                                         <ColumnDefinition Width="60"/>
                                                                         <ColumnDefinition Width="*"/>
-                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="120"/>
                                                                     </Grid.ColumnDefinitions>
 
 																	<!-- Year -->
-																	<xctk:WatermarkTextBox Grid.Column="0" Text="{Binding Year}" Watermark="Year" VerticalContentAlignment="Center" Margin="0,0,6,0"/>
+                                                                    <xctk:WatermarkTextBox Grid.Column="0" Text="{Binding Year}" Watermark="Year" VerticalContentAlignment="Center" Margin="0,0,6,0" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
 
 																	<!-- Type -->
 																	<ComboBox Grid.Column="1"
@@ -213,11 +213,11 @@
 
 																	<!-- Conditional fields -->
 																	<StackPanel Grid.Column="2" Orientation="Horizontal">
-																		<xctk:WatermarkTextBox Text="{Binding Author}" Watermark="Author" Width="200" VerticalContentAlignment="Center" 
+                                                                        <xctk:WatermarkTextBox Text="{Binding Author}" Watermark="Author" Width="120" VerticalContentAlignment="Center" 
 																							   Visibility="{Binding Type, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter=Books}"/>
-																		<xctk:WatermarkTextBox Text="{Binding Franchise}" Watermark="Franchise" Width="200" VerticalContentAlignment="Center" 
+                                                                        <xctk:WatermarkTextBox Text="{Binding Franchise}" Watermark="Franchise" Width="120" VerticalContentAlignment="Center" 
 																							   Visibility="{Binding Type, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter=Movie}"/>
-																		<xctk:WatermarkTextBox Text="{Binding SeasonNumber}" Watermark="Season" Width="200" VerticalContentAlignment="Center" 
+                                                                        <xctk:WatermarkTextBox Text="{Binding SeasonNumber}" Watermark="Season" Width="120" VerticalContentAlignment="Center" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"
 																							   Visibility="{Binding Type, Converter={StaticResource TypeToVisibilityConverter}, ConverterParameter=Series}"/>
 																	</StackPanel>
                                                                 </Grid>

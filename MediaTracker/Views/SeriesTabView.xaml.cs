@@ -44,4 +44,16 @@ public partial class SeriesTabView
             MainItemsControl.Visibility = Visibility.Visible;
         }
     }
+
+    private void Integer_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+        e.Handled = !e.Text.All(char.IsDigit);
+    }
+
+    private void Integer_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        // Allow control keys (Backspace, Delete, arrows, Tab)
+        if (e.Key == Key.Space)
+            e.Handled = true;
+    }
 }

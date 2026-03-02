@@ -46,25 +46,25 @@
                         <TextBlock Text="Title:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
                         <xctk:WatermarkTextBox Width="180" Height="36" Padding="4" Text="{Binding NewTitle}" VerticalContentAlignment="Center" Watermark="Title"/>
                     </StackPanel>
-                    <!-- Year -->
-                    <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Start Year:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYear}" VerticalContentAlignment="Center" Watermark="Start Year"/>
-                    </StackPanel>
-                    <!-- YearEnd -->
-                    <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="End Year:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYearEnd}" VerticalContentAlignment="Center" Watermark="End Year"/>
-                    </StackPanel>
                     <!-- Saga -->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="Saga:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
                         <xctk:WatermarkTextBox Width="120" Height="36" Padding="4" Text="{Binding NewSaga}" VerticalContentAlignment="Center" Watermark="Saga"/>
                     </StackPanel>
+                    <!-- YearStart -->
+                    <StackPanel Margin="0,0,12,0">
+                        <TextBlock Text="Start Year:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
+                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYear}" VerticalContentAlignment="Center" Watermark="Start Year" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
+                    </StackPanel>
+                    <!-- YearEnd -->
+                    <StackPanel Margin="0,0,12,0">
+                        <TextBlock Text="End Year:" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
+                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewYearEnd}" VerticalContentAlignment="Center" Watermark="End Year" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
+                    </StackPanel>
                     <!-- Number of Seasons-->
                     <StackPanel Margin="0,0,12,0">
                         <TextBlock Text="# Seasons:" Height="16" FontSize="12" Foreground="{DynamicResource TextBrush}"/>
-                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewNumberOfSeasons}" VerticalContentAlignment="Center" Watermark="#" />
+                        <xctk:WatermarkTextBox Width="60" Height="36" Padding="4" Text="{Binding NewNumberOfSeasons}" VerticalContentAlignment="Center" Watermark="#" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
                     </StackPanel>
                     <!-- Add Button -->
                     <StackPanel Margin="0,0,12,0">
@@ -101,7 +101,7 @@
                                 MouseLeftButtonUp="SagaHeader_Click">
                                 <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="24"/>
                                 <TextBlock Text="{Binding IsCollapsed, Converter={StaticResource CollapseArrowConverter}}" 
-                                   Margin="4,8,0,0"/>
+                                           Margin="4,8,0,0"/>
                             </StackPanel>
 
                             <!-- Series under this Saga -->
@@ -177,17 +177,17 @@
                                                             <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}">
                                                                 <!-- Title -->
                                                                 <xctk:WatermarkTextBox Text="{Binding Title}"
-                                                                 Watermark="Title"
-                                                                 FontSize="15"
-                                                                 Padding="4"
-                                                                 Margin="0,0,0,6"
-                                                                 MaxWidth="300"/>
+                                                                                       Watermark="Title"
+                                                                                       FontSize="15"
+                                                                                       Padding="4"
+                                                                                       Margin="0,0,0,6"
+                                                                                       MaxWidth="300"/>
 
                                                                 <!-- Saga -->
                                                                 <xctk:WatermarkTextBox Text="{Binding Saga}"
-                                                                 Watermark="Saga"
-                                                                 Padding="4"
-                                                                 Margin="0,0,0,6"/>
+                                                                                       Watermark="Saga"
+                                                                                       Padding="4"
+                                                                                       Margin="0,0,0,6"/>
 
                                                                 <!-- Year / YearEnd / Number of Seasons-->
                                                                 <Grid>
@@ -197,12 +197,12 @@
                                                                         <ColumnDefinition Width="50"/>
                                                                     </Grid.ColumnDefinitions>
 
-                                                                    <xctk:WatermarkTextBox Grid.Column="0" Text="{Binding Year}" Watermark="Start Year" Margin="0,0,6,0"/>
+                                                                    <xctk:WatermarkTextBox Grid.Column="0" Text="{Binding Year}" Watermark="Start Year" Margin="0,0,6,0" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
                                                                     <xctk:WatermarkTextBox Grid.Column="1"
                                                                      Text="{Binding YearEnd, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
-                                                                     Watermark="End Year" Margin="0,0,6,0"/>
+                                                                     Watermark="End Year" Margin="0,0,6,0" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
                                                                     <xctk:WatermarkTextBox Grid.Column="2"
-                                                                     Text="{Binding NumberOfSeasons, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Watermark="#"/>
+                                                                     Text="{Binding NumberOfSeasons, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Watermark="#" PreviewTextInput="Integer_PreviewTextInput" PreviewKeyDown="Integer_PreviewKeyDown"/>
                                                                 </Grid>
                                                                     <xctk:ColorPicker
                                                                         SelectedColor="{Binding BaseColor, Mode=TwoWay}"
