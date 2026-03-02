@@ -273,13 +273,22 @@ namespace MediaTracker.ViewModels
             if (media == null || string.IsNullOrWhiteSpace(input))
                 return;
 
+            var formats = new[]
+            {
+                "dd/MM/yyyy",
+                "MM/yyyy"
+               };
+
             if (!DateTime.TryParseExact(
                     input.Trim(),
-                    "dd/MM/yyyy",
+                    formats,
                     System.Globalization.CultureInfo.InvariantCulture,
                     System.Globalization.DateTimeStyles.None,
                     out var date))
                 throw new InvalidOperationException("Invalid date format");
+
+            if (input.Trim().Length == 7) // format MM/yyyy
+                date = new DateTime(date.Year, date.Month, 1);
 
             if (date.Year < 1900 || date.Year > 2099)
                 throw new InvalidOperationException("Year must be between 1900 and 2099");
