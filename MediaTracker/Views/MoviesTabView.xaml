@@ -251,7 +251,7 @@
                                                             </MultiBinding>
                                                         </StackPanel.Visibility>
                                                         <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                                            <TextBox Width="120" Text="{Binding DataContext.NewWatchDate, RelativeSource={RelativeSource AncestorType=UserControl}}" Height="28" Padding="4"/>
+                                                            <xctk:WatermarkTextBox Watermark="day/month/year" Width="120" Text="{Binding DataContext.NewWatchDate, RelativeSource={RelativeSource AncestorType=UserControl}}" Height="28" Padding="4" />
                                                             <Button Content="Add" Margin="6,0,0,0"
                                                             Command="{Binding DataContext.AddWatchDateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                             CommandParameter="{Binding}" Height="28" Padding="12,0" Background="#4CAF50" Foreground="White"/>

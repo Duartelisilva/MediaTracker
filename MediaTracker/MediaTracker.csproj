@@ -6,10 +6,16 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+	<ApplicationIcon>Resources\MediaTrackerIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="MainWindow.xalm" />
+    <None Remove="Resources\MediaTrackerIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\MediaTrackerIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="NovaPasta\" />
     <Folder Include="Themes\" />
   </ItemGroup>
 

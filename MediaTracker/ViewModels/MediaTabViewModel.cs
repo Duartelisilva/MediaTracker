@@ -17,8 +17,8 @@ namespace MediaTracker.ViewModels
     public abstract class MediaTabViewModel<T> : TabViewModel, INotifyPropertyChanged where T : Media
     {
         // Fields
-        public ObservableCollection<T> MediaCollection { get; } = new();
-        public ObservableCollection<Media.SagaGroup<T>> SagaGroups { get; } = new();
+        public ObservableCollection<T> MediaCollection { get; } = [];
+        public ObservableCollection<Media.SagaGroup<T>> SagaGroups { get; } = [];
         private string? _newTitle;
         private string? _newSaga;
         private string? _newWatchDate;
@@ -237,11 +237,11 @@ namespace MediaTracker.ViewModels
 
                 source = CurrentSearchOption switch
                 {
-                    SearchOption.Title => source.Where(m => (m.Title ?? "").ToLower().Contains(search)),
+                    SearchOption.Title => source.Where(m => (m.Title ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)),
                     SearchOption.Year => source.Where(m => m.Year.ToString().Contains(search)),
-                    SearchOption.Saga => source.Where(m => (m.Saga ?? "").ToLower().Contains(search)),
-                    SearchOption.Franchise => source.Where(m => (m is Movie movie && (movie.Franchise ?? "").ToLower().Contains(search)) || false),
-                    SearchOption.Author => source.Where(m => (m is Books book && (book.Author ?? "").ToLower().Contains(search)) || false),
+                    SearchOption.Saga => source.Where(m => (m.Saga ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)),
+                    SearchOption.Franchise => source.Where(m => (m is Movie movie && (movie.Franchise ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)) || false),
+                    SearchOption.Author => source.Where(m => (m is Books book && (book.Author ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)) || false),
                     _ => source
                 };
             }
@@ -275,9 +275,15 @@ namespace MediaTracker.ViewModels
 
             var formats = new[]
             {
+                "d/M/yyyy",
+                "dd/M/yyyy",
+                "d/MM/yyyy",
                 "dd/MM/yyyy",
+                "M/yyyy",
                 "MM/yyyy"
                };
+
+            var trimmed = input.Trim();
 
             if (!DateTime.TryParseExact(
                     input.Trim(),
@@ -287,7 +293,7 @@ namespace MediaTracker.ViewModels
                     out var date))
                 throw new InvalidOperationException("Invalid date format");
 
-            if (input.Trim().Length == 7) // format MM/yyyy
+            if (trimmed.Count(c => c == '/') == 1)
                 date = new DateTime(date.Year, date.Month, 1);
 
             if (date.Year < 1900 || date.Year > 2099)
@@ -315,8 +321,7 @@ namespace MediaTracker.ViewModels
             if (media == null)
                 return;
 
-            if (media.WatchDates.Contains(date))
-                media.WatchDates.Remove(date);
+            media.WatchDates.Remove(date);
 
             media.OnPropertyChanged(nameof(media.LastWatchedDate));
             media.OnPropertyChanged(nameof(media.Seen));
