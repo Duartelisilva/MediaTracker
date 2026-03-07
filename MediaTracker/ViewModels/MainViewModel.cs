@@ -67,8 +67,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    private object _selectedTab;
-    public object SelectedTab
+    private object? _selectedTab;
+    public object? SelectedTab
     {
         get => _selectedTab;
         set

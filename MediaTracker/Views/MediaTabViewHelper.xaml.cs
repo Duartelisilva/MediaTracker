@@ -1,9 +1,7 @@
-﻿using System;
+﻿using MediaTracker.Domain;
+using MediaTracker.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using MediaTracker.Domain;
-using MediaTracker.ViewModels;
 
 namespace MediaTracker.Views.Helpers;
 

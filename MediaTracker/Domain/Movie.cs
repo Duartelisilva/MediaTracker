@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Text.Json.Serialization;
-using System.Windows.Media;
+﻿using System.Text.Json.Serialization;
 
 namespace MediaTracker.Domain;
 
@@ -18,7 +13,7 @@ public class Movie : Media
         get => _franchise;
         set
         {
-            _franchise = value; // always keep what user types
+            _franchise = value;
             OnPropertyChanged();
         }
     }
@@ -29,9 +24,12 @@ public class Movie : Media
         set { _franchiseNumber = value; OnPropertyChanged(); }
     }
 
+    [JsonIgnore] 
+    public string? BackupFranchise { get; set; }
 
-    [JsonIgnore] public string? BackupFranchise { get; set; }
-    [JsonIgnore] public int? BackupFranchiseNumber { get; set; }   
+    [JsonIgnore] 
+    public int? BackupFranchiseNumber { get; set; }
+
     public override string DisplayMeta
     {
         get

@@ -1,15 +1,8 @@
 ﻿using MediaTracker.Domain;
 using MediaTracker.Services;
-using System;
-using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Input;
-using System.Linq;
-using System.ComponentModel;
 using System.Windows.Data;
-using static MediaTracker.Domain.Series;
 using System.Windows.Media;
-using System.Text.Json.Serialization;
 
 namespace MediaTracker.ViewModels;
 

@@ -1,9 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using MediaTracker.Domain;
+﻿using MediaTracker.Domain;
 using MediaTracker.ViewModels;
 using MediaTracker.Views.Helpers;
+using System.Windows;
+using System.Windows.Input;
 
 namespace MediaTracker.Views;
 public partial class MoviesTabView

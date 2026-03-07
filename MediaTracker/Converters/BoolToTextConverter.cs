@@ -9,7 +9,7 @@ namespace MediaTracker.Converters
         // ConverterParameter should be "Show Text|Hide Text"
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (parameter is string str && str.Contains("|"))
+            if (parameter is string str && str.Contains('|'))
             {
                 var parts = str.Split('|');
                 bool b = value is bool val && val;
@@ -20,7 +20,7 @@ namespace MediaTracker.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (parameter is string str && str.Contains("|"))
+            if (parameter is string str && str.Contains('|'))
             {
                 var parts = str.Split('|');
                 return value?.ToString() == parts[1];

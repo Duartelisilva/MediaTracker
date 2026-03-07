@@ -1,15 +1,8 @@
 ﻿using MediaTracker.Domain;
 using MediaTracker.Services;
-using System;
-using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Input;
-using System.Linq;
-using System.ComponentModel;
 using System.Windows.Data;
-using static MediaTracker.Domain.Books;
 using System.Windows.Media;
-using System.Text.Json.Serialization;
 
 namespace MediaTracker.ViewModels;
 
@@ -132,7 +125,6 @@ public sealed class BooksTabViewModel : MediaTabViewModel<Books>
         _repository.Save(MediaCollection); // book-specific persistence
     }
 
-
     private bool ValidateBook(Books book)
     {
         string title = book.Title?.Trim() ?? "";
@@ -179,6 +171,7 @@ public sealed class BooksTabViewModel : MediaTabViewModel<Books>
     {
         item.IsEditing = editing;
     }
+
     protected override void BackupItem(Books book)
     {
         book.BackupTitle = book.Title;
@@ -196,7 +189,7 @@ public sealed class BooksTabViewModel : MediaTabViewModel<Books>
         book.Year = book.BackupYear;
         book.Saga = book.BackupSaga;
         book.BookNumber = book.BackupBookNumber;
-        book.BackupAuthor = book.Author;
+        book.Author = book.BackupAuthor;
         book.Note = book.BackupNote;
         book.BaseColor = book.BackupBaseColor;
 

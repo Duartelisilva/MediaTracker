@@ -81,9 +81,9 @@
                 
                 <!-- Dropdown -->
                 <ComboBox Width="80"
-                  Margin="0,0,6,0"
-                  SelectedItem="{Binding SelectedSearchOption}"
-                  VerticalContentAlignment="Center">
+                          Margin="0,0,6,0"
+                          SelectedItem="{Binding SelectedSearchOption}"
+                          VerticalContentAlignment="Center">
 
                     <ComboBox.ItemsSource>
                         <x:Array Type="{x:Type vm:SearchOption}">

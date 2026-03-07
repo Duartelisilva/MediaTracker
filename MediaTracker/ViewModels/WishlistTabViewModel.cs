@@ -1,15 +1,8 @@
 ﻿using MediaTracker.Domain;
 using MediaTracker.Services;
-using System;
-using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Input;
-using System.Linq;
-using System.ComponentModel;
 using System.Windows.Data;
-using static MediaTracker.Domain.Wishlist;
 using System.Windows.Media;
-using System.Text.Json.Serialization;
 
 namespace MediaTracker.ViewModels;
 
@@ -212,7 +205,7 @@ public sealed class WishlistTabViewModel : MediaTabViewModel<Wishlist>
         wishlist.BackupTitle = wishlist.Title;
         wishlist.BackupYear = wishlist.Year;
         wishlist.BackupFranchise = wishlist.Franchise;
-        wishlist.BackupSeasonNumber= wishlist.SeasonNumber;
+        wishlist.BackupSeasonNumber = wishlist.SeasonNumber;
         wishlist.BackupAuthor = wishlist.Author;
         wishlist.BackupNote = wishlist.Note;
         wishlist.BackupBaseColor = wishlist.BaseColor;

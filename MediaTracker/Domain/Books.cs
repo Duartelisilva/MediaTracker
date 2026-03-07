@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Text.Json.Serialization;
-using System.Windows.Media;
+﻿using System.Text.Json.Serialization;
 
 namespace MediaTracker.Domain;
 
@@ -23,12 +18,15 @@ public class Books : Media
         get => _author;
         set
         {
-            _author = value; // always keep what user types
+            _author = value;
             OnPropertyChanged();
         }
     }
-    [JsonIgnore] public int? BackupBookNumber { get; set; }
-    [JsonIgnore] public string? BackupAuthor { get; set; }
+    [JsonIgnore] 
+    public int? BackupBookNumber { get; set; }
+
+    [JsonIgnore] 
+    public string? BackupAuthor { get; set; }
 
     public override string DisplayMeta
     {

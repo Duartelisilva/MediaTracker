@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Text.Json.Serialization;
-using System.Windows.Media;
+﻿using System.Text.Json.Serialization;
 
 namespace MediaTracker.Domain;
+
 public enum WishlistType
 {
     Movie,
     Series,
     Books
 }
+
 public class Wishlist : Media
 {
 
@@ -55,11 +52,17 @@ public class Wishlist : Media
     }
 
 
-    [JsonIgnore] public string Category => Type.ToString();
+    [JsonIgnore]
+    public string Category => Type.ToString();
 
-    [JsonIgnore] public string? BackupFranchise { get; set; }
-    [JsonIgnore] public int? BackupSeasonNumber { get; set; }
-    [JsonIgnore] public string? BackupAuthor { get; set; }
+    [JsonIgnore]
+    public string? BackupFranchise { get; set; }
+
+    [JsonIgnore]
+    public int? BackupSeasonNumber { get; set; }
+
+    [JsonIgnore]
+    public string? BackupAuthor { get; set; }
 
     public override string DisplayMeta
     {

@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using MediaTracker.ViewModels;
 
 namespace MediaTracker
 {

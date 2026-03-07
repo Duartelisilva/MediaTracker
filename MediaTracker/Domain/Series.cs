@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Text.Json.Serialization;
-using System.Windows.Media;
+﻿using System.Text.Json.Serialization;
 
 namespace MediaTracker.Domain;
 
@@ -24,8 +19,12 @@ public class Series : Media
         set { _numberOfSeasons = value; OnPropertyChanged(); }
     }
 
-    [JsonIgnore] public int? BackupYearEnd { get; set; }
-    [JsonIgnore] public int? BackupNumberOfSeasons { get; set; }
+    [JsonIgnore]
+    public int? BackupYearEnd { get; set; }
+
+    [JsonIgnore]
+    public int? BackupNumberOfSeasons { get; set; }
+
 
     public override string DisplayMeta
     {
@@ -44,6 +43,7 @@ public class Series : Media
 
             if (LastWatchedDate.HasValue)
                 parts.Add(LastWatchedDate.Value.ToString("dd/MM/yyyy"));
+
             return string.Join(" • ", parts);
         }
     }
